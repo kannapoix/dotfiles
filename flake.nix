@@ -3,6 +3,7 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         ./hosts/flake-module.nix
+        ./home/flake-module.nix
       ];
       systems = ["aarch64-darwin"];
     };
