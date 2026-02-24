@@ -32,7 +32,6 @@
     btcdeb
     delta
     jq
-    slack
   ];
 
   programs = {

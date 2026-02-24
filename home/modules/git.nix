@@ -2,6 +2,13 @@
   programs.git = {
     enable = true;
 
+    ignores = [
+      ".direnv"
+      ".devenv"
+      ".vscode"
+      "**/.claude/settings.local.json"
+    ];
+
     aliases = {
       push-f = "push --force-with-lease";
       list-alias = "!git config --list | perl -F\\\\. -ane 'printf \"%-20s%s\", split \"=\", join(\".\", @F[1..@F-1]), 2 if $F[0] eq \"alias\"'";
