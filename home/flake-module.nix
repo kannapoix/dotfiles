@@ -12,5 +12,12 @@
       ];
       extraSpecialArgs = {inherit inputs;};
     };
+    homeConfigurations."uk@kBook-Pro-24" = inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
+      modules = [
+        ./mbp-2024/default.nix
+      ];
+      extraSpecialArgs = {inherit inputs;};
+    };
   };
 }

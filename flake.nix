@@ -1,11 +1,26 @@
 {
-  outputs = {flake-parts, ...} @ inputs:
+  outputs = {
+    flake-parts,
+    self,
+    ...
+  } @ inputs:
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         ./hosts/flake-module.nix
         ./home/flake-module.nix
       ];
       systems = ["aarch64-darwin"];
+
+      perSystem = {pkgs, ...}: {
+        apps.default = {
+          type = "app";
+          program = pkgs.writeShellScript "install" ''
+            set -euo pipefail
+            HOSTNAME=''${1:-$(hostname -s)}
+            nix run nix-darwin -- switch --flake "${self}#$HOSTNAME"
+          '';
+        };
+      };
     };
 
   inputs = {
