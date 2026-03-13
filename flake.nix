@@ -17,7 +17,7 @@
           program = toString (pkgs.writeShellScript "install" ''
             set -euo pipefail
             HOSTNAME=''${1:-$(hostname -s)}
-            nix run nix-darwin -- switch --flake "${self}#$HOSTNAME"
+            nix --extra-experimental-features 'nix-command flakes' run nix-darwin -- switch --flake "${self}#$HOSTNAME"
           '');
         };
       };
