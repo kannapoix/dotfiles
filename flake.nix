@@ -18,6 +18,9 @@
             set -euo pipefail
             HOSTNAME=''${1:-$(hostname -s)}
             sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin -- switch --flake "${self}#$HOSTNAME"
+            if [ ! -d "$HOME/dotfiles" ]; then
+              ${pkgs.git}/bin/git clone https://github.com/kannapoix/dotfiles.git "$HOME/dotfiles"
+            fi
           '');
         };
       };
