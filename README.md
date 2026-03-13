@@ -1,6 +1,6 @@
 Install
 ```shell
-nix run github:kannapoix/dotfiles -- [HOSTNAME]
+nix run --extra-experimental-features 'nix-command flakes' github:kannapoix/dotfiles -- [HOSTNAME]
 ```
 
 ```shell
