@@ -14,11 +14,11 @@
       perSystem = {pkgs, ...}: {
         apps.default = {
           type = "app";
-          program = pkgs.writeShellScript "install" ''
+          program = toString (pkgs.writeShellScript "install" ''
             set -euo pipefail
             HOSTNAME=''${1:-$(hostname -s)}
             nix run nix-darwin -- switch --flake "${self}#$HOSTNAME"
-          '';
+          '');
         };
       };
     };
