@@ -4,6 +4,7 @@
       pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
       modules = [
         {
+          nixpkgs.config.allowUnfree = true;
           nixpkgs.config.permittedInsecurePackages = [
             "python3.12-ecdsa-0.19.1"
           ];
@@ -16,6 +17,7 @@
       pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
       modules = [
         {
+          nixpkgs.config.allowUnfree = true;
           nixpkgs.config.permittedInsecurePackages = [
             "python3.12-ecdsa-0.19.1"
           ];

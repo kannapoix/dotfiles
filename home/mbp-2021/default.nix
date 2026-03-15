@@ -21,6 +21,7 @@
 
   imports = [
     ../modules/git.nix
+    ../modules/vscode.nix
   ];
 
   home.packages = with pkgs; [
