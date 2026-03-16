@@ -36,4 +36,18 @@
     # config.boot.binfmt.emulatedSystems = ["x86_64-linux"];
   };
   nix.settings.trusted-users = ["@admin"];
+
+  system.primaryUser = "uk";
+
+  system.defaults = {
+    dock = {
+      autohide = true;
+      expose-group-apps = true;
+    };
+    trackpad = {
+      Clicking = true;
+      TrackpadRightClick = true;
+      TrackpadThreeFingerDrag = false;
+    };
+  };
 }

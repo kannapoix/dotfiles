@@ -43,4 +43,18 @@
   };
   # Required by linux-builder
   nix.settings.trusted-users = ["@admin"];
+
+  system.primaryUser = "uk";
+
+  system.defaults = {
+    dock = {
+      autohide = true;
+      expose-group-apps = true;
+    };
+    trackpad = {
+      Clicking = true;
+      TrackpadRightClick = true;
+      TrackpadThreeFingerDrag = false;
+    };
+  };
 }
