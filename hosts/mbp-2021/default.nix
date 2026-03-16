@@ -56,5 +56,11 @@
       TrackpadRightClick = true;
       TrackpadThreeFingerDrag = false;
     };
+    CustomUserPreferences = {
+      NSGlobalDomain = {
+        "com.apple.mouse.scaling" = 3;
+        "com.apple.trackpad.scaling" = 0.875;
+      };
+    };
   };
 }
