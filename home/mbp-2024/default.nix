@@ -25,6 +25,8 @@
     btcdeb
     delta
     jq
+    nil
+    alejandra
   ];
 
   programs = {
