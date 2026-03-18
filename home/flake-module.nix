@@ -1,7 +1,10 @@
 {inputs, ...}: {
   flake = {
     homeConfigurations."uk@kBook-Pro" = inputs.home-manager.lib.homeManagerConfiguration {
-      pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
+      pkgs = import inputs.nixpkgs {
+        system = "aarch64-darwin";
+        overlays = [inputs.nur.overlays.default];
+      };
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
@@ -14,7 +17,10 @@
       extraSpecialArgs = {inherit inputs;};
     };
     homeConfigurations."uk@kBook-Pro-24" = inputs.home-manager.lib.homeManagerConfiguration {
-      pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
+      pkgs = import inputs.nixpkgs {
+        system = "aarch64-darwin";
+        overlays = [inputs.nur.overlays.default];
+      };
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
