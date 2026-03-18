@@ -2,9 +2,6 @@
   programs.git = {
     enable = true;
 
-    userName = "UK";
-    userEmail = "uenokan@gmail.com";
-
     ignores = [
       ".direnv"
       ".devenv"
@@ -12,18 +9,23 @@
       "**/.claude/settings.local.json"
     ];
 
-    aliases = {
-      push-f = "push --force-with-lease";
-      list-alias = "!git config --list | perl -F\\\\. -ane 'printf \"%-20s%s\", split \"=\", join(\".\", @F[1..@F-1]), 2 if $F[0] eq \"alias\"'";
-      st = "status";
-      sw = "!f () { git branch | sed 's/*//g' | sed 's/ //g' | fzf; }; branch=`f`; git switch $branch";
-      sw-remote = "!f () { git branch -r --list  | awk '$1 != \"origin/HEAD\" {print $1}' | cut -d/ -f2- | fzf; }; branch=`f`; git switch -c $branch origin/$branch";
-      p = "add -p";
-      amend-noedit = "commit --amend --no-edit";
-      lg = "log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full";
-    };
+    settings = {
+      user = {
+        name = "UK";
+        email = "uenokan@gmail.com";
+      };
 
-    extraConfig = {
+      alias = {
+        push-f = "push --force-with-lease";
+        list-alias = "!git config --list | perl -F\\\\. -ane 'printf \"%-20s%s\", split \"=\", join(\".\", @F[1..@F-1]), 2 if $F[0] eq \"alias\"'";
+        st = "status";
+        sw = "!f () { git branch | sed 's/*//g' | sed 's/ //g' | fzf; }; branch=`f`; git switch $branch";
+        sw-remote = "!f () { git branch -r --list  | awk '$1 != \"origin/HEAD\" {print $1}' | cut -d/ -f2- | fzf; }; branch=`f`; git switch -c $branch origin/$branch";
+        p = "add -p";
+        amend-noedit = "commit --amend --no-edit";
+        lg = "log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full";
+      };
+
       core = {
         pager = "delta";
       };

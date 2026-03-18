@@ -46,6 +46,10 @@
 
   system.primaryUser = "uk";
 
+  fonts.packages = with pkgs; [
+    udev-gothic-nf
+  ];
+
   system.defaults = {
     dock = {
       autohide = true;

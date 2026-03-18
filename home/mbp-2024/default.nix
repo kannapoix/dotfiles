@@ -8,12 +8,13 @@
   home.homeDirectory = "/Users/uk";
 
   # DONOT EDIT: https://nix-community.github.io/home-manager/index.xhtml#sec-upgrade-release-state-version
-  home.stateVersion = "25.05"; # Please read the comment before changing.
+  home.stateVersion = "25.11"; # Please read the comment before changing.
 
   imports = [
     ../modules/git.nix
     ../modules/vscode.nix
     ../modules/firefox.nix
+    ../modules/ghostty.nix
   ];
 
   home.packages = with pkgs; [
