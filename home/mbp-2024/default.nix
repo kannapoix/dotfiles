@@ -13,6 +13,7 @@
   imports = [
     ../modules/git.nix
     ../modules/vscode.nix
+    ../modules/firefox.nix
   ];
 
   home.packages = with pkgs; [
