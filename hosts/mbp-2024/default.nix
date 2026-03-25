@@ -43,6 +43,19 @@
     udev-gothic-nf
   ];
 
+  homebrew = {
+    enable = true;
+    casks = [
+      "dbeaver-community"
+      "firefox"
+      "claude"
+      "ghostty"
+      "notion"
+      "visual-studio-code"
+    ];
+    onActivation.cleanup = "zap";
+  };
+
   system.defaults = {
     dock = {
       autohide = true;

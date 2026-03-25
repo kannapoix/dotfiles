@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   programs.firefox = {
     enable = true;
+    package = null; # installed via homebrew cask
     profiles.default = {
       extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         gaoptout

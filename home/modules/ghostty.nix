@@ -1,7 +1,7 @@
-{ pkgs, ... }: {
+{ ... }: {
   programs.ghostty = {
     enable = true;
-    package = pkgs.ghostty-bin;
+    package = null;
     settings = {
       font-family = "UDEV Gothic NF";
       keybind = [
