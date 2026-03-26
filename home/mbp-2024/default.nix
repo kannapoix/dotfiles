@@ -31,5 +31,6 @@
     nil
     alejandra
     gnused
+    awscli2
   ];
 }

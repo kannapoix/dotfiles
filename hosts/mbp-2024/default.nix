@@ -52,6 +52,7 @@
       "ghostty"
       "notion"
       "visual-studio-code"
+      "session-manager-plugin"
     ];
     onActivation.cleanup = "zap";
   };
