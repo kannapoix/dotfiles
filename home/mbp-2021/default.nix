@@ -21,6 +21,8 @@
 
   imports = [
     ../modules/git.nix
+    ../modules/zsh.nix
+    ../modules/programs.nix
     ../modules/vscode.nix
     ../modules/ghostty.nix
   ];
@@ -34,11 +36,6 @@
     btcdeb
     delta
     jq
+    gnused
   ];
-
-  programs = {
-    direnv.enable = true;
-  };
-
-  programs.home-manager.enable = true;
 }

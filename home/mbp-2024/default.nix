@@ -12,6 +12,8 @@
 
   imports = [
     ../modules/git.nix
+    ../modules/zsh.nix
+    ../modules/programs.nix
     ../modules/firefox.nix
     ../modules/ghostty.nix
   ];
@@ -27,11 +29,6 @@
     jq
     nil
     alejandra
+    gnused
   ];
-
-  programs = {
-    direnv.enable = true;
-  };
-
-  programs.home-manager.enable = true;
 }
