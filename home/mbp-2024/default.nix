@@ -15,6 +15,7 @@
     ../modules/zsh.nix
     ../modules/programs.nix
     ../modules/firefox.nix
+    ../modules/ssh.nix
     ../modules/ghostty.nix
   ];
 
