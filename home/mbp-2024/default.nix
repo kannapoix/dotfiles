@@ -33,4 +33,10 @@
     gnused
     awscli2
   ];
+
+  programs.ssh.matchBlocks = {
+    "i-* mi-*" = {
+      proxyCommand = "sh -c \"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
+    };
+  };
 }
