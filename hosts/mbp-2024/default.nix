@@ -61,6 +61,12 @@
     dock = {
       autohide = true;
       expose-group-apps = true;
+      persistent-apps = [
+        "/System/Applications/Utilities/Activity Monitor.app"
+      ];
+      wvous-tl-corner = 14; # Quick Note
+      wvous-tr-corner = 12; # Notification Center
+      wvous-bl-corner = 13; # Lock Screen
     };
     trackpad = {
       Clicking = true;
