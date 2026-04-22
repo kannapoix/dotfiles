@@ -51,5 +51,6 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    nixpkgs-direnv.url = "github:NixOS/nixpkgs/5b5b46259bef947314345ab3f702c56b7788cab8";
 };
 }
