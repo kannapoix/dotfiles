@@ -19,6 +19,8 @@
     ../modules/ghostty.nix
   ];
 
+  modules.firefox.syncDeviceName = "mbp-2024";
+
   home.packages = with pkgs; [
     vim
     gh

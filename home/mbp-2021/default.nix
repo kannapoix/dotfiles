@@ -25,7 +25,10 @@
     ../modules/programs.nix
     ../modules/vscode.nix
     ../modules/ghostty.nix
+    ../modules/firefox.nix
   ];
+
+  modules.firefox.syncDeviceName = "mbp-2021";
 
   home.packages = with pkgs; [
     vim

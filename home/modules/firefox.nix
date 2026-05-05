@@ -1,5 +1,17 @@
-{pkgs, ...}: {
-  programs.firefox = {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
+  options.modules.firefox = {
+    syncDeviceName = lib.mkOption {
+      type = lib.types.str;
+      description = "Device name shown in Firefox Sync";
+    };
+  };
+
+  config.programs.firefox = {
     enable = true;
     package = null; # installed via homebrew cask
     profiles.default = {
@@ -8,7 +20,7 @@
       ];
       settings = {
         "browser.translations.neverTranslateLanguages" = "ja,en";
-        "services.sync.client.name" = "mbp-2024";
+        "services.sync.client.name" = config.modules.firefox.syncDeviceName;
       };
       search = {
         force = true;
