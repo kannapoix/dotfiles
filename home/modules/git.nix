@@ -27,6 +27,7 @@
       };
 
       core = {
+        editor = "vim";
         pager = "delta";
       };
       interactive = {
