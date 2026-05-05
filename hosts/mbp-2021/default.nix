@@ -46,6 +46,11 @@
 
   system.primaryUser = "uk";
 
+  networking = {
+    computerName = "kBook Pro";
+    hostName = "kBook-Pro";
+  };
+
   fonts.packages = with pkgs; [
     udev-gothic-nf
   ];
