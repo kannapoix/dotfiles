@@ -23,7 +23,6 @@
     ../modules/git.nix
     ../modules/zsh.nix
     ../modules/programs.nix
-    ../modules/vscode.nix
     ../modules/ghostty.nix
     ../modules/firefox.nix
   ];
