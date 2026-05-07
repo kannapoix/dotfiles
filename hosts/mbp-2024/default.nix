@@ -45,16 +45,14 @@
 
   homebrew = {
     enable = true;
+    taps = [
+      "homebrew/core"
+      "homebrew/cask"
+    ];
     casks = [
-      "dbeaver-community"
-      "firefox"
-      "claude"
-      "ghostty"
-      "notion"
-      "visual-studio-code"
       "session-manager-plugin"
     ];
-    onActivation.cleanup = "zap";
+    onActivation.cleanup = "uninstall";
   };
 
   system.defaults = {
