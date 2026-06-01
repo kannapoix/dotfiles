@@ -17,6 +17,7 @@
     ../modules/firefox.nix
     ../modules/ssh.nix
     ../modules/ghostty.nix
+    ../modules/claude.nix
   ];
 
   modules.firefox.syncDeviceName = "mbp-2024";
