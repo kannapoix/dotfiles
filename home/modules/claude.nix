@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.modules.claude;
@@ -14,6 +15,24 @@
             {
               type = "command";
               command = "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'";
+            }
+          ];
+        }
+      ];
+      PreToolUse = [
+        {
+          matcher = "Bash";
+          hooks = [
+            {
+              type = "command";
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                if printf '%s' "$cmd" | grep -q 'gh pr create' \
+                   && ! printf '%s' "$cmd" | grep -q -- '--draft'; then
+                  echo 'PRs must be created as drafts. Re-run with: gh pr create --draft' >&2
+                  exit 2
+                fi
+              '';
             }
           ];
         }
