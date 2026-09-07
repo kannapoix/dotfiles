@@ -12,11 +12,6 @@
         match = "all";
         extraOptions.IgnoreUnknown = "UseKeychain";
       };
-      "*" = {
-        controlMaster = "auto";
-        controlPath = "~/.ssh/master-%C";
-        controlPersist = "10m";
-      };
       "github.com" = {
         identityFile = "~/.ssh/id_ed25519_github";
         extraOptions = {

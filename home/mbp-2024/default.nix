@@ -35,15 +35,12 @@
     alejandra
     gnused
     awscli2
+    openssh
   ];
 
   programs.ssh.matchBlocks = {
     "i-* mi-*" = {
       proxyCommand = "sh -c \"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
-      extraOptions = {
-        UseKeychain = "yes";
-        AddKeysToAgent = "yes";
-      };
     };
   };
 }
