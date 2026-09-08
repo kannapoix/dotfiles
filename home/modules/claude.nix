@@ -38,8 +38,8 @@
               type = "command";
               command = ''
                 cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
-                if printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch'; then
-                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"git push / home-manager switch always require explicit user approval"}}'
+                if printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch|darwin-rebuild +switch|run +nix-darwin'; then
+                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"git push and config-applying commands (home-manager/darwin-rebuild switch) always require explicit user approval"}}'
                 fi
               '';
             }
@@ -51,6 +51,8 @@
       ask = [
         "Bash(git push:*)"
         "Bash(home-manager switch:*)"
+        "Bash(darwin-rebuild switch:*)"
+        "Bash(sudo darwin-rebuild switch:*)"
       ];
       allow = [
         "Bash(gh pr view:*)"
