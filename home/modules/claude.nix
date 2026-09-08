@@ -34,11 +34,24 @@
                 fi
               '';
             }
+            {
+              type = "command";
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                if printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch'; then
+                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"git push / home-manager switch always require explicit user approval"}}'
+                fi
+              '';
+            }
           ];
         }
       ];
     };
     permissions = {
+      ask = [
+        "Bash(git push:*)"
+        "Bash(home-manager switch:*)"
+      ];
       allow = [
         "Bash(gh pr view:*)"
         "Bash(gh pr list:*)"
