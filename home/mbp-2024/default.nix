@@ -41,6 +41,24 @@
   programs.ssh.matchBlocks = {
     "i-* mi-*" = {
       proxyCommand = "sh -c \"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
+      identityAgent = "~/.ssh/agent.sock";
+      addKeysToAgent = "yes";
+    };
+  };
+
+  # FIDO-capable ssh-agent for sk keys. Apple's agent cannot sign with them.
+  launchd.agents.ssh-agent = {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        (toString (pkgs.writeShellScript "ssh-agent-fido" ''
+          sock="$HOME/.ssh/agent.sock"
+          rm -f "$sock"
+          exec ${pkgs.openssh}/bin/ssh-agent -D -a "$sock"
+        ''))
+      ];
+      KeepAlive = true;
+      RunAtLoad = true;
     };
   };
 }
