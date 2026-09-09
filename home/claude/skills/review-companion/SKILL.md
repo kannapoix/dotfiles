@@ -10,6 +10,7 @@ Read the arguments. A target alone means a full review (below). A target plus a 
 
 ## Prepare
 
+- When the PR is to be worked on in this session's worktree, check it out first with `/load-pr <PR>`; the surrounding code you read is then the code under review, not the session's branch.
 - Read the existing discussion first (review comments, comment threads, linked issues). Do not repeat what is already raised or resolved. A mismatch between what was agreed there and what the target now says is itself a finding.
 - Never judge the target alone. Read what it calls, what calls it, its siblings, the docs and specs it references, the real resources it touches, the current implementation a design describes. When a claim rests on an external spec or a pinned version, fetch the primary source and check it. Cite what you used.
 - If a review bot already runs on the project, nits and typos are its job. Go past it.
