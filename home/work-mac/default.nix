@@ -20,7 +20,7 @@
     ../modules/claude.nix
   ];
 
-  modules.firefox.syncDeviceName = "mbp-2024";
+  modules.firefox.syncDeviceName = "work-mac";
 
   home.packages = with pkgs; [
     vim
