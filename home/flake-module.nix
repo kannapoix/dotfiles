@@ -16,7 +16,7 @@
       ];
       extraSpecialArgs = {inherit inputs;};
     };
-    homeConfigurations."uk@kBook-Pro-24" = inputs.home-manager.lib.homeManagerConfiguration {
+    homeConfigurations."uk@work-mac" = inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = import inputs.nixpkgs {
         system = "aarch64-darwin";
         overlays = [inputs.nur.overlays.default];
@@ -28,7 +28,7 @@
             "python3.12-ecdsa-0.19.1"
           ];
         }
-        ./mbp-2024/default.nix
+        ./work-mac/default.nix
       ];
       extraSpecialArgs = {inherit inputs;};
     };

@@ -6,9 +6,9 @@
       ];
       specialArgs = {inherit inputs;};
     };
-    darwinConfigurations."kBook-Pro-24" = inputs.nix-darwin.lib.darwinSystem {
+    darwinConfigurations."work-mac" = inputs.nix-darwin.lib.darwinSystem {
       modules = [
-        ./mbp-2024/default.nix
+        ./work-mac/default.nix
         inputs.nix-homebrew.darwinModules.nix-homebrew
         {
           nix-homebrew = {

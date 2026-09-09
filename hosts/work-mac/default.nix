@@ -39,6 +39,11 @@
 
   system.primaryUser = "uk";
 
+  networking = {
+    computerName = "Work MacBook Pro";
+    hostName = "work-mac";
+  };
+
   fonts.packages = with pkgs; [
     udev-gothic-nf
   ];
