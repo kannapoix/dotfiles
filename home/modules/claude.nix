@@ -95,6 +95,7 @@ in {
       enable = true;
       package = null;
       settings = lib.recursiveUpdate baseSettings cfg.settings;
+      memory.source = ../claude/CLAUDE.md;
       skills = lib.mapAttrs' (name: _: lib.nameValuePair name (../claude/skills + "/${name}")) (
         lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../claude/skills)
       );
