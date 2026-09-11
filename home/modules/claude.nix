@@ -46,6 +46,68 @@
           ];
         }
       ];
+      # Auto-format edited Nix files in this repo with alejandra.
+      PostToolUse = [
+        {
+          matcher = "Edit|Write|MultiEdit";
+          hooks = [
+            {
+              type = "command";
+              command = ''
+                input=$(cat)
+                remote=$(${pkgs.git}/bin/git config --get remote.origin.url 2>/dev/null || true)
+                case "$remote" in
+                  *kannapoix/dotfiles*) : ;;
+                  *) exit 0 ;;
+                esac
+                file=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.tool_input.file_path // ""')
+                case "$file" in
+                  *.nix) : ;;
+                  *) exit 0 ;;
+                esac
+                [ -f "$file" ] && ${pkgs.alejandra}/bin/alejandra --quiet "$file" >/dev/null 2>&1
+                exit 0
+              '';
+            }
+          ];
+        }
+      ];
+      # Gate on the flake evaluating before finishing: mirrors the manual
+      # `nix build` verify step, but cheap and cross-platform (eval only).
+      Stop = [
+        {
+          matcher = "";
+          hooks = [
+            {
+              type = "command";
+              command = ''
+                input=$(cat)
+                if [ "$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.stop_hook_active // false')" = "true" ]; then
+                  exit 0
+                fi
+                remote=$(${pkgs.git}/bin/git config --get remote.origin.url 2>/dev/null || true)
+                case "$remote" in
+                  *kannapoix/dotfiles*) : ;;
+                  *) exit 0 ;;
+                esac
+                root=$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null) || exit 0
+                cd "$root" || exit 0
+                if ! out=$(${pkgs.nix}/bin/nix eval --extra-experimental-features 'nix-command flakes' --no-warn-dirty --json '.#homeConfigurations' --apply 'cs: builtins.mapAttrs (_: c: c.activationPackage.drvPath) cs' 2>&1); then
+                  echo 'home-manager configs do not evaluate; fix before finishing:' >&2
+                  printf '%s\n' "$out" >&2
+                  exit 2
+                fi
+                if ! out=$(${pkgs.nix}/bin/nix eval --extra-experimental-features 'nix-command flakes' --no-warn-dirty --json '.#darwinConfigurations' --apply 'cs: builtins.mapAttrs (_: c: c.system.drvPath) cs' 2>&1); then
+                  echo 'nix-darwin configs do not evaluate; fix before finishing:' >&2
+                  printf '%s\n' "$out" >&2
+                  exit 2
+                fi
+                exit 0
+              '';
+            }
+          ];
+        }
+      ];
     };
     permissions = {
       ask = [
