@@ -19,9 +19,10 @@
           ];
         }
       ];
+      # matcher covers Claude's "Bash" tool and Cursor's "Shell" tool.
       PreToolUse = [
         {
-          matcher = "Bash";
+          matcher = "Bash|Shell";
           hooks = [
             {
               type = "command";
@@ -29,8 +30,7 @@
                 cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
                 if printf '%s' "$cmd" | grep -q 'gh pr create' \
                    && ! printf '%s' "$cmd" | grep -q -- '--draft'; then
-                  echo 'PRs must be created as drafts. Re-run with: gh pr create --draft' >&2
-                  exit 2
+                  ${pkgs.jq}/bin/jq -nc '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:"PRs must be created as drafts. Re-run with: gh pr create --draft"}}'
                 fi
               '';
             }
@@ -60,7 +60,7 @@
                   *kannapoix/dotfiles*) : ;;
                   *) exit 0 ;;
                 esac
-                file=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.tool_input.file_path // ""')
+                file=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.tool_input.file_path // .file_path // .tool_input.path // ""')
                 case "$file" in
                   *.nix) : ;;
                   *) exit 0 ;;
@@ -92,15 +92,15 @@
                 esac
                 root=$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null) || exit 0
                 cd "$root" || exit 0
+                # Block via {"decision":"block","reason":...} on stdout (exit 0) so it
+                # works in both Claude Code and Cursor (Cursor turns it into a followup).
                 if ! out=$(${pkgs.nix}/bin/nix eval --extra-experimental-features 'nix-command flakes' --no-warn-dirty --json '.#homeConfigurations' --apply 'cs: builtins.mapAttrs (_: c: c.activationPackage.drvPath) cs' 2>&1); then
-                  echo 'home-manager configs do not evaluate; fix before finishing:' >&2
-                  printf '%s\n' "$out" >&2
-                  exit 2
+                  printf '%s' "$out" | ${pkgs.jq}/bin/jq -Rs '{decision:"block",reason:("home-manager configs do not evaluate; fix before finishing:\n" + .)}'
+                  exit 0
                 fi
                 if ! out=$(${pkgs.nix}/bin/nix eval --extra-experimental-features 'nix-command flakes' --no-warn-dirty --json '.#darwinConfigurations' --apply 'cs: builtins.mapAttrs (_: c: c.system.drvPath) cs' 2>&1); then
-                  echo 'nix-darwin configs do not evaluate; fix before finishing:' >&2
-                  printf '%s\n' "$out" >&2
-                  exit 2
+                  printf '%s' "$out" | ${pkgs.jq}/bin/jq -Rs '{decision:"block",reason:("nix-darwin configs do not evaluate; fix before finishing:\n" + .)}'
+                  exit 0
                 fi
                 exit 0
               '';
