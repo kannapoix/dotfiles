@@ -4,24 +4,20 @@ Create this once at https://cursor.com/automations/new then activate it. Cloud A
 
 | Field | Value |
 |---|---|
-| Name | Propose harness hooks and skills |
-| Repository | `kannapoix/dotfiles` |
+| Name | Propose harness from recent sessions |
+| Repository | `kannapoix/dotfiles` (needed so the run can read existing skills/hooks) |
 | Trigger | Scheduled, weekly Monday 09:00 JST (`0 0 * * 1` UTC) |
-| Tools | Default Cloud Agent tools. Enable commenting on the PR it opens. Do not grant merge. |
+| Tools | Default Cloud Agent tools. No merge. No need to comment on a PR. |
 | Active | On |
 
 ## Prompt (paste as the automation prompt)
 
 ```
-Weekly harness review for github.com/kannapoix/dotfiles.
+Weekly harness review for Kan.
 
 Follow home/claude/skills/propose-harness/SKILL.md exactly.
 
-Look at origin/main (and open session branches) from the last 14 days. Compare against existing hooks in home/modules/claude.nix and skills in home/claude/skills/. Propose at most two high-confidence Claude Code hooks or skills that would remove repeated friction. Do not duplicate improve-harness. Do not reformat flake.nix or ghostty.nix.
+Look at Cloud Agent sessions with the user from the last 7 days (list-cloud-agents + transcripts). Compare against existing hooks in home/modules/claude.nix and skills in home/claude/skills/. Propose skills or Cursor Automations that would make those sessions smoother. Do not implement, do not commit, do not open a PR. Do not duplicate improve-harness. Do not reformat flake.nix or ghostty.nix.
 
-If you implement: one commit per change, verify with
-nix build '.#homeConfigurations."uk@work-mac".activationPackage'
-then inspect result/home-files/ and remove result. Open a draft PR only. Never merge, never git land, never git push origin main. home-manager switch and darwin-rebuild switch are the user's step.
-
-If nothing is worth adding, say so and do not open a PR.
+If nothing is worth adding, say so.
 ```
