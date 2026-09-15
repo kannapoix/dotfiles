@@ -7,6 +7,8 @@
   programs.zsh = {
     enable = true;
     setOptions = ["NONOMATCH"];
+    # Prezto sets LESS only when it is empty; this is its default without -S (chop long lines).
+    sessionVariables.LESS = "-g -i -M -R -w -X -z-4";
     prezto = {
       enable = true;
       pmodules = [
