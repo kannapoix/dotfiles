@@ -39,7 +39,9 @@
               type = "command";
               command = ''
                 cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
-                if printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch|darwin-rebuild +switch|run +nix-darwin'; then
+                if printf '%s' "$cmd" | grep -Eq 'gh +pr +(ready|merge)'; then
+                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"gh pr ready and gh pr merge are always run by the user; report that the PR is ready and stop"}}'
+                elif printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch|darwin-rebuild +switch|run +nix-darwin'; then
                   echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"git push and config-applying commands (home-manager/darwin-rebuild switch) always require explicit user approval"}}'
                 fi
               '';
@@ -49,6 +51,10 @@
       ];
     };
     permissions = {
+      deny = [
+        "Bash(gh pr ready:*)"
+        "Bash(gh pr merge:*)"
+      ];
       ask = [
         "Bash(git push:*)"
         "Bash(home-manager switch:*)"
