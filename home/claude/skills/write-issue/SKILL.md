@@ -80,6 +80,7 @@ No 人のゲート, スコープ外, or 依存 sections: an ordering constraint 
 
 - Title: a verb and its object that someone without the background understands.
 - The human sections hold decisions only; every "how" is in the agent block.
+- 手順 prescribes no history: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage, and an issue that repeats it gets followed past the draft stage too.
 - Terms follow the project's conventions.
 - Consistent with the sibling issues: same terms, no contradicting decisions.
 - Derived problems are separate issues; nothing sits between the parent and this issue.
