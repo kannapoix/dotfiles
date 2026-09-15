@@ -20,6 +20,9 @@
     enable = true;
     ephemeral = true;
     maxJobs = 6;
+    # NixOS VM tests declare requiredSystemFeatures = ["nixos-test" "kvm"]; the
+    # builder must advertise nixos-test or nix refuses to schedule them.
+    supportedFeatures = ["kvm" "benchmark" "big-parallel" "nixos-test"];
     config = {
       virtualisation = {
         darwin-builder = {
