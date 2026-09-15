@@ -81,7 +81,6 @@
         "Bash(gh pr checkout:*)"
         "Bash(git fetch:*)"
         "Bash(git rebase:*)"
-        "Bash(git push --force-with-lease:*)"
         "Bash(git symbolic-ref:*)"
         "Bash(git remote show:*)"
         "Bash(git rev-parse:*)"
