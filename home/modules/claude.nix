@@ -7,6 +7,7 @@
   cfg = config.modules.claude;
 
   baseSettings = {
+    attribution.commit = "";
     hooks = {
       Notification = [
         {
