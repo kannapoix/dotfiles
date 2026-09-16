@@ -97,6 +97,8 @@ in {
   };
 
   config = {
+    home.sessionPath = ["$HOME/.local/bin"];
+
     programs.claude-code = {
       enable = true;
       package = null;
