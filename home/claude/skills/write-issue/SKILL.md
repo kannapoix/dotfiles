@@ -98,7 +98,7 @@ gh api graphql -f query='mutation($p: ID!, $c: ID!) { addSubIssue(input: {issueI
 
 ## Update
 
-The user edits issues on the web too. Fetch the latest body (`gh issue view <N> --json body -q .body`), replace only the affected part, keep the title unless asked, and write back with `gh issue edit <N> --body-file`. When a decision changes, list the sibling issues it reaches and propose updating them together.
+The user edits issues on the web too, so the body is changed with `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched; keep the title unless asked. When a decision changes, list the sibling issues it reaches and propose updating them together.
 
 ## Measure
 

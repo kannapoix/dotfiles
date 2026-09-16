@@ -6,6 +6,9 @@
 }: let
   cfg = config.modules.claude;
 
+  # Guarded edits of issue and PR bodies; the skills call it instead of gh edit.
+  ghBodyEdit = pkgs.writers.writePython3Bin "gh-body-edit" {} (builtins.readFile ../claude/bin/gh-body-edit.py);
+
   baseSettings = {
     attribution.commit = "";
     hooks = {
@@ -98,6 +101,7 @@ in {
 
   config = {
     home.sessionPath = ["$HOME/.local/bin"];
+    home.packages = [ghBodyEdit];
 
     programs.claude-code = {
       enable = true;

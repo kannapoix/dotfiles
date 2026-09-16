@@ -59,13 +59,13 @@ The description is for reviewers; what you checked is for the person who ran you
 
 ## Updating a PR description
 
-The person edits it on the web while you work.
+The person edits it on the web while you work, so every change goes through `gh-body-edit`, which replaces one part of the current body and nothing else, aborts unless the anchor occurs exactly once and the body is still what it fetched, keeps the line endings, and checks what landed:
 
-1. `gh pr view <N> --json body -q .body > base.md`. That is the base.
-2. Make the change on a copy: only the part asked for, no whole-body rewrite from a draft, and keep the line endings as they are (a web-edited body is CRLF).
-3. Right before writing, fetch again and `cmp` it with base.md. If it differs, redo the change on the fresh copy.
-4. `gh pr edit <N> --body-file new.md`, then fetch once more and `cmp` with new.md.
-5. Nothing you were not asked to change. An instruction to squash, rebase, or push does not include permission to touch the description.
+```bash
+gh-body-edit pr <N> --replace old.md new.md    # or --append-after anchor.md new.md, or --delete old.md
+```
+
+The files hold the exact text and live in the scratchpad. Only the part asked for, no whole-body rewrite from a draft, and nothing you were not asked to change: an instruction to squash, rebase, or push does not include permission to touch the description.
 
 ## Measure
 

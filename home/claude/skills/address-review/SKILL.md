@@ -50,6 +50,7 @@ Commit by kind: `git commit --fixup=<sha>`; for amend!, `git commit -m "amend! <
   3. `git diff <old tip> <new tip>` must show the fix and nothing else; `git log --oneline <base>..HEAD` must show the same commits as before. If not, stop and show the user before touching anything else.
   4. Each stacked branch follows with `git rebase --onto <new tip> <old tip> <branch>`, then the same diff check on that branch. Return to the PR branch.
 - **reject**: no commit. The reply carries the evidence.
+- A fix that changes a decision the PR description states also changes that sentence, with `gh-body-edit pr <N> --replace old.md new.md`, and nothing else in the description.
 - Either way, draft the reply in the author's voice and in the language the author uses on that PR: the part of the comment that is right comes first, then what was done or why not, in as few sentences as the point allows. Under review, name the fix's short SHA so the reviewer can open just that change (after a fold, the fixup's new SHA). Mark anything you added that the author did not say.
 
 Post a reply only when told to, with `gh api` against the thread's comment id; resolve a thread only when told to. Never push. Name the command the user would run: `git push` under review, `git push --force-with-lease` for a draft or after a fold.
