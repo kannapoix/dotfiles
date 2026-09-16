@@ -54,7 +54,19 @@ Commit by kind: `git commit --fixup=<sha>`; for amend!, `git commit -m "amend! <
 
 Post a reply only when told to, with `gh api` against the thread's comment id; resolve a thread only when told to. Never push. Name the command the user would run: `git push` under review, `git push --force-with-lease` for a draft or after a fold.
 
-When every thread is settled and the PR is approved, say the fixups are ready to squash and name the author's commands: `git fetch origin <base>`, `git rebase -i --autosquash origin/<base>`, `git push --force-with-lease`. Branches stacked on the PR follow with `git rebase --onto`.
+When every thread is settled, draft one PR comment that lists what changed since the review, so a reviewer can re-read just that: in the language of the PR, one line per commit in branch order, with who raised the point when it was not the reviewer, and any verification output, such as a plan, in the same comment under `<details>`. Post it only when told to, with `gh pr comment <PR> --body-file`.
+
+```markdown
+<one line: the review points were addressed by the commits below, to be squashed right before merging>
+- <short sha>: <what it changes> (<who raised it, when not the reviewer>)
+<details><summary><what was verified></summary>
+
+<output>
+
+</details>
+```
+
+Once the PR is approved, say the fixups are ready to squash and name the author's commands: `git fetch origin <base>`, `git rebase -i --autosquash origin/<base>`, `git push --force-with-lease`. Branches stacked on the PR follow with `git rebase --onto`.
 
 ## Ledger
 
