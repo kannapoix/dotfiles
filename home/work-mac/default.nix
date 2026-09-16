@@ -22,6 +22,10 @@
 
   modules.firefox.syncDeviceName = "work-mac";
 
+  modules.claude.settings.enabledPlugins = {
+    "aikido@claude-plugins-official" = true;
+  };
+
   home.packages = with pkgs; [
     vim
     gh
