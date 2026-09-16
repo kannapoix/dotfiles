@@ -18,3 +18,7 @@ One commit per change. What may happen to a pull request's branch depends on its
 - **Before merge**: the author squashes and catches up with the base in one push: `git fetch origin <base>`, `git rebase -i --autosquash origin/<base>`, `git push --force-with-lease`. Repositories that squash-merge skip this. When the review is settled, say the branch is ready for it and name the commands.
 
 An instruction to keep a pull request to one commit, from an issue for example, covers the draft stage only.
+
+# Causes
+
+A fix that removes the symptom is not finished until the cause is named. Before calling a bug fixed, say in one line what caused it and what evidence says so — a log line, a `git log -S` hit, a failing test, a repro. Where there is no evidence for the step below, stop and call it a hypothesis rather than filling the gap with something plausible. Depth is a result, not a target: keep going down while the evidence holds, and stop at a cause that can actually be changed. When the same failure turns up a second time, the cause to name is why the first fix let it through.
