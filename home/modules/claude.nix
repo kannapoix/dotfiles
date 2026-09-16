@@ -11,6 +11,12 @@
 
   baseSettings = {
     attribution.commit = "";
+    # The Bash tool otherwise runs the login shell (zsh here) with its profile
+    # snapshotted in, so bash scripts trip over zsh's parsing, word splitting,
+    # and the path array. The override is read by the CLI and the desktop app
+    # (undocumented as of 2.1.273); with no bash rc file the snapshot holds only
+    # Claude Code's own defaults and the same PATH as before.
+    env.CLAUDE_CODE_SHELL = "${pkgs.bashInteractive}/bin/bash";
     hooks = {
       Notification = [
         {
