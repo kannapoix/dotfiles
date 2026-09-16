@@ -24,34 +24,35 @@ Say in one line what you loaded: the PR, its stage, how many unresolved threads,
 
 Checked: <what holds and what does not, each with file:line, a command's output, a spec clause, or the primary source>
 Options: <a> / <b> / ...
-➡️ <recommendation> — fixup of <sha> <subject>  (or: amend! of <sha>, because <what the message gets wrong> / new commit, because <reason> / separate issue)
+➡️ <recommendation> — fixup of <sha> <subject>  (or: amend! of <sha>, because <what the message gets wrong> / fold into <sha> fixup! <subject>, unreviewed since <date> / new commit, because <reason> / separate issue)
 
 accept / modify / reject?
 ```
 
 Then stop. Verify before judging: read the code the comment points at, what calls it, and the upstream docs or source when the claim rests on a tool's behavior. A wrong premise is called out with evidence regardless of who wrote it; a correct and important point is said to be so. Do not soften or inflate. When the reviewer is right about the problem but not the fix, say both.
 
-Pick the target commit by reading `git log --oneline <base>..HEAD` and the history of the touched lines; the commit that introduced the thing under review is the default. Then pick the kind by that commit's message:
+Pick the target commit by reading `git log --oneline <base>..HEAD` and the history of the touched lines; the commit that introduced the thing under review is the default. The target never carries a `fixup!`, `amend!`, or `squash!` prefix: when the lines came in with a fixup, the target is that fixup's own target, so the new subject names the change it belongs to rather than another fixup. Then pick the kind by that commit's message:
 
 - **fixup**: the fix makes the commit do what its message already says.
 - **amend!**: the fix makes the message wrong, such as a design change within the same change; it carries the rewritten message.
+- **fold**: the lines came in with a fixup of the author's that no review or comment on the PR is dated after. A fixup is what a reviewer reads to see what changed since their last look, so a correction to an unreviewed one goes into it, not after it; this is the one rewrite the branch gets under review.
 - **new commit**: the fix needs its own reason in the log, being a separate decision or something that could be reverted on its own.
 - **separate issue**: the point is outside the PR's goal; no commit here.
 
 ## After the decision
 
-Commit by kind: `git commit --fixup=<sha>`; for amend!, `git commit -m "amend! <subject of sha>" -m "<rewritten message>"`, since `--fixup=amend:` needs an editor and refuses `-m` and `-F`; a new commit gets its own message.
+Commit by kind: `git commit --fixup=<sha>`; for amend!, `git commit -m "amend! <subject of sha>" -m "<rewritten message>"`, since `--fixup=amend:` needs an editor and refuses `-m` and `-F`; a new commit gets its own message. For fold, note the tip first; with the fixup at the tip, `git commit --amend --no-edit`, otherwise `git commit -m "fixup! <full sha of the fixup>"` and `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <fixup>^`, which autosquash matches by hash, so the fixup keeps its message. Then `git diff <old tip> <new tip>` must show the fix and nothing else and `git log --oneline <base>..HEAD` the same commits as before; if not, stop and show the user.
 
-- **accept / modify, under review**: implement, `git add` the files by name, commit, and stop there: no rebase, no squash. `git fetch origin <head>` and check `git merge-base --is-ancestor origin/<head> HEAD`; if the remote moved, show the user before anything else. A base that moved stays as it is; if it conflicts, or the fix needs what landed there, say so and name `git rb` and `git push --force-with-lease` for the author.
+- **accept / modify, under review**: implement, `git add` the files by name, commit by kind, and stop there: no rebase or squash beyond a fold. `git fetch origin <head>` and check `git merge-base --is-ancestor origin/<head> HEAD`; if the remote moved, show the user before anything else. A base that moved stays as it is; if it conflicts, or the fix needs what landed there, say so and name `git rb` and `git push --force-with-lease` for the author.
 - **accept / modify, draft**: note the tip and the branches stacked on it (`git branch --contains HEAD`, minus the current branch), implement, `git add` the files by name, and commit. Then, in this order:
   1. `git fetch` the remote, take the base freshly: `git merge-base HEAD origin/<default>`. Never reuse a base from earlier in the session; another session may have rebased the branch since.
   2. `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <base>`.
   3. `git diff <old tip> <new tip>` must show the fix and nothing else; `git log --oneline <base>..HEAD` must show the same commits as before. If not, stop and show the user before touching anything else.
   4. Each stacked branch follows with `git rebase --onto <new tip> <old tip> <branch>`, then the same diff check on that branch. Return to the PR branch.
 - **reject**: no commit. The reply carries the evidence.
-- Either way, draft the reply in the author's voice and in the language the author uses on that PR: the part of the comment that is right comes first, then what was done or why not, in as few sentences as the point allows. Under review, name the fix's short SHA so the reviewer can open just that change. Mark anything you added that the author did not say.
+- Either way, draft the reply in the author's voice and in the language the author uses on that PR: the part of the comment that is right comes first, then what was done or why not, in as few sentences as the point allows. Under review, name the fix's short SHA so the reviewer can open just that change (after a fold, the fixup's new SHA). Mark anything you added that the author did not say.
 
-Post a reply only when told to, with `gh api` against the thread's comment id; resolve a thread only when told to. Never push. Name the command the user would run: `git push` under review, `git push --force-with-lease` for a draft.
+Post a reply only when told to, with `gh api` against the thread's comment id; resolve a thread only when told to. Never push. Name the command the user would run: `git push` under review, `git push --force-with-lease` for a draft or after a fold.
 
 When every thread is settled and the PR is approved, say the fixups are ready to squash and name the author's commands: `git fetch origin <base>`, `git rebase -i --autosquash origin/<base>`, `git push --force-with-lease`. Branches stacked on the PR follow with `git rebase --onto`.
 
