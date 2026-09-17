@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session - follow its "🤖 エージェント向け指示" block, run /code-review --fix to convergence, self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
+description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run /code-review --fix to convergence, self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A changed premise or a decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
 argument-hint: <issue number or URL>
 ---
 
@@ -11,8 +11,21 @@ Say in one line what you loaded: the issue, its parent, and the branch you will 
 ## Load
 
 - `gh issue view <N> --json title,body,url,comments`, and the parent it links. Read the comments: a later comment overrides the body where they disagree.
-- Check every item under 前提の確認 first. If one fails, comment what failed and stop.
 - Read the repository's CLAUDE.md and its review guide (REVIEW.md at the root, when present) before writing code.
+
+## Check that the issue still holds
+
+Issues are often cut together and worked in order, so what lands in between can make this one wrong: a sibling's PR settled a decision differently, the parent changed, a file 手順 names moved. The premises held when the issue was written; test them against the present before creating the branch.
+
+- Gather what happened after the issue was created: comments on the parent, and its body if edited since; for each sibling not closed by then, its body if edited since, its comments, and the PRs that reference it, with their state and descriptions; and the commits on the base that touch the paths the issue names.
+  ```bash
+  git fetch origin <base>
+  gh api graphql -f query='{ repository(owner: "<owner>", name: "<repo>") { issue(number: <N>) { createdAt parent { lastEditedAt subIssues(first: 50) { nodes { number state closedAt lastEditedAt timelineItems(itemTypes: [CROSS_REFERENCED_EVENT], first: 20) { nodes { ... on CrossReferencedEvent { source { ... on PullRequest { url state mergedAt } } } } } } } } } } }'
+  git log --first-parent --since=<createdAt> origin/<base> -- <paths the issue names>
+  ```
+- Test the issue against that and the code on `origin/<base>`: each item under 前提の確認, the facts and links in 背景, each decision in 変更方針, the files and shapes 手順 names, the 検証 commands, and whether a 完了条件 is already met.
+- A failed item, a claim not true now, or a decision that something landed since contradicts is a changed premise, even where the work could adapt to it; when unsure, count it as one. Shifted line numbers and commits that touch nothing the issue relies on are not. Comment on the issue, numbered: what the issue says and where, what holds now with the link that shows it, and which sections it reaches. Then stop before creating the branch: the plan is the person's to reconsider. Once they have updated the issue or answered in a comment, start again from Load; an answer given in the session goes on the issue as a comment first, so the issue stays the whole brief.
+- Otherwise say in one line what you checked, and create the branch as 前提の確認 says.
 
 ## Loop
 
