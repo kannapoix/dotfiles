@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session - follow its "🤖 エージェント向け指示" block, run /code-review --fix to convergence, self-review, open a draft PR with the standard description, post the verification record as a PR comment, report on the issue, and stop. A decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
+description: Carry out one issue as the execution session - follow its "🤖 エージェント向け指示" block, run /code-review --fix to convergence, self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
 argument-hint: <issue number or URL>
 ---
 
@@ -20,7 +20,7 @@ Say in one line what you loaded: the issue, its parent, and the branch you will 
 2. `/code-review --fix` until a round produces no findings, at most two rounds. Inside this loop, do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report.
 3. Self-review against the review guide: consistency with the neighbouring code, what the called scripts and modules actually do, failure modes (a failure halfway through, a re-run, a stale checkout).
 4. Commit, one commit per change. Until the PR leaves draft you may reshape them; once it is out of draft or reviewed, changes go on as new commits (fixups, as CLAUDE.md sets out), even where 手順 says to keep one commit. The reason a value or an option was chosen goes into the PR description, never into a code comment; a code comment is only for a caveat that applies to the whole file. Push only if 制約 names the branch; otherwise report the branch and the push command, and wait for the person.
-5. Once the branch is on the remote, create the draft PR (the hook forces `--draft`) with the description below, then post the verification record as a comment on the PR (`gh pr comment <PR> --body-file`). If the person already opened the PR, update its description with the procedure below instead.
+5. Once the branch is on the remote, create the draft PR (the hook forces `--draft`) with the description below, then present the verification record below to the person in the session. If the person already opened the PR, update its description with the procedure below instead.
 6. Comment on the issue: the PR URL, a summary of the change, the commands the person runs with their expected results, and the decisions the issue did not cover, numbered and unchanged.
 7. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they comment results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
 
@@ -42,11 +42,11 @@ Write the PR description, the PR comment, and the issue comment in the language 
 - A term a reader would look up is linked once, at its first occurrence, to the official documentation. Open the page and confirm the term is on it before linking.
 - A value not yet measured is written as 「未計測。#N で計測して決める」, with no predicted number or table.
 - A decision made with the user during the session goes into the description when it is made, not at the end.
-- No 確認したこと section: reviewers do not need it. It goes in the PR comment below.
+- No 確認したこと section: reviewers do not need it. It goes in the verification record below.
 
-## Verification comment
+## Verification record
 
-The description is for reviewers; what you checked is for the person who ran you. Post it as one comment on the PR right after creating it.
+The description is for reviewers; what you checked is for the person who ran you. Present it in the session right after creating the PR, never as a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
 
 ````markdown
 ## 確認したこと
