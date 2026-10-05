@@ -85,7 +85,7 @@ The type, written into the body file. It lives here until the team adopts it as 
 </details>
 ````
 
-No 人のゲート, スコープ外, or 依存 sections: an ordering constraint belongs in ゴール or 変更方針, a decision left to a person is marked 人が決める in 変更方針, and out-of-scope work is simply absent, or its own issue. When the agent may push, the first constraint names the one branch instead: "push は `<branch>` のみ". Write the issue in the language the repository's issues use.
+No 人のゲート, スコープ外, or 依存 sections: an ordering constraint belongs in ゴール or 変更方針, a decision left to a person is marked 人が決める in 変更方針, and out-of-scope work is simply absent, or its own issue. 制約 does not permit a push: leave "push・draft 解除・apply・merge は人が行う" as it is, and do not replace it with "push は `<branch>` のみ". Naming a branch is not permission to push. The execution agent pushes only when the current user message says so. Write the issue in the language the repository's issues use.
 
 ## Before posting
 
