@@ -19,9 +19,20 @@ Say in one line what you are doing: a new sub-issue under #N, or an update of #M
 
 ## Draft
 
-Produce one draft. Ask only the questions the user has to decide, bundled in one message; settle everything else yourself. Create nothing until the user says the draft is good.
+Produce one draft. Keep the full issue body, agent block included, in the file passed to `gh issue create --body-file` (or to `gh-body-edit` on an update). Create nothing until the user says the draft is good.
 
-The type. It lives here until the team adopts it as an issue template. The headings are fixed strings; the agent block's heading is what a future automatic trigger will extract.
+In chat, show only what a person decides, as rendered markdown (headings and bullets), never as a fenced dump of the issue body, and never the `🤖 エージェント向け指示` block:
+
+- one line: a new sub-issue under #N, or an update of #M
+- the title
+- the parent
+- 背景, ゴール, 変更方針, 完了条件
+
+Ask only the questions the user has to decide, bundled in one message; settle everything else yourself. End with one sentence listing which decisions were carried into the agent block. Do not paste the block.
+
+After every review comment that changes a decision, update the human sections and the agent block in the same edit, before the next showing and before create. 変更方針, ゴール, and 完了条件 stay the decisions; 手順, 検証, and 制約 stay the how, and they name the same decisions.
+
+The type, written into the body file. It lives here until the team adopts it as an issue template. The headings are fixed strings; the agent block's heading is what a future automatic trigger will extract.
 
 ````markdown
 ## 背景
@@ -79,7 +90,7 @@ No 人のゲート, スコープ外, or 依存 sections: an ordering constraint 
 ## Before posting
 
 - Title: a verb and its object that someone without the background understands.
-- The human sections hold decisions only; every "how" is in the agent block.
+- The human sections hold decisions only; every "how" is in the agent block. 手順, 検証, and 制約 name the same decisions as 変更方針, ゴール, and 完了条件.
 - 手順 prescribes no history: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage, and an issue that repeats it gets followed past the draft stage too.
 - Terms follow the project's conventions.
 - Consistent with the sibling issues: same terms, no contradicting decisions.
@@ -98,7 +109,7 @@ gh api graphql -f query='mutation($p: ID!, $c: ID!) { addSubIssue(input: {issueI
 
 ## Update
 
-The user edits issues on the web too, so the body is changed with `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched; keep the title unless asked. When a decision changes, list the sibling issues it reaches and propose updating them together.
+The user edits issues on the web too, so the body is changed with `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched; keep the title unless asked. When a decision changes, update the human sections and the agent block in the same edit, show the proposal the way Draft shows a draft, and list the sibling issues it reaches to propose updating them together.
 
 ## Measure
 
