@@ -38,4 +38,8 @@ One fenced code block, starting with the line `# Harness improvement brief`, the
 - **Tentative type**: skill, claude.nix setting (permission or hook), git.nix alias, memory, or CLAUDE.md. A guess the dotfiles session may overrule.
 - **References**: paths, PR or issue URLs, commit hashes. Point at existing artifacts instead of restating them.
 
+The brief may name the project and quote the session. It is pasted into chat and not committed. The dotfiles session sees only the brief, and the files it writes are committed, so they stay general: the concrete example shows what the request means, and none of its project names, hostnames, issue numbers, or quotations are copied into a skill, setting, alias, memory, or doc. End every brief with this line:
+
+`The concrete example illustrates the request. Write the general rule. Copy none of its project names, hostnames, issue numbers, or quotations into the repo.`
+
 Redact secrets, tokens, and personal data.
