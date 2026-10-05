@@ -9,6 +9,31 @@
   # Guarded edits of issue and PR bodies; the skills call it instead of gh edit.
   ghBodyEdit = pkgs.writers.writePython3Bin "gh-body-edit" {} (builtins.readFile ../claude/bin/gh-body-edit.py);
 
+  # The variable Noto CJK face in nixpkgs registers only Thin, and resvg then
+  # draws font-weight 400 and 700 as the same glyphs. Pin the JP face.
+  notoSansCjkJp = let
+    python = pkgs.python3.withPackages (ps: [ps.fonttools]);
+  in
+    pkgs.runCommand "noto-sans-cjk-jp" {nativeBuildInputs = [python];} ''
+      mkdir -p "$out"
+      python3 ${../claude/bin/instantiate-noto-cjk-jp.py} \
+        ${pkgs.noto-fonts-cjk-sans}/share/fonts/opentype/noto-cjk/NotoSansCJK-VF.otf.ttc \
+        "$out"
+    '';
+
+  scopeDiagramPng = pkgs.writeShellScriptBin "scope-diagram-png" ''
+    set -euo pipefail
+    if [ "$#" -ne 2 ]; then
+      echo "usage: scope-diagram-png input.svg output.png" >&2
+      exit 2
+    fi
+    exec ${pkgs.resvg}/bin/resvg \
+      --skip-system-fonts \
+      --languages ja \
+      --use-fonts-dir ${notoSansCjkJp} \
+      "$1" "$2"
+  '';
+
   baseSettings = {
     attribution.commit = "";
     # The Bash tool otherwise runs the login shell (zsh here) with its profile
@@ -107,7 +132,7 @@ in {
 
   config = {
     home.sessionPath = ["$HOME/.local/bin"];
-    home.packages = [ghBodyEdit];
+    home.packages = [ghBodyEdit scopeDiagramPng];
 
     programs.claude-code = {
       enable = true;
