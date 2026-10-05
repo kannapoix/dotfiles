@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run /code-review --fix to convergence, self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A changed premise or a decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
+description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run the review pass to convergence (Cursor - local /code-review findings only, plus Bugbot and Security Review; Claude Code - /code-review --fix), self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A changed premise or a decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the issue names the branch. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
 argument-hint: <issue number or URL>
 ---
 
@@ -30,7 +30,14 @@ Issues are often cut together and worked in order, so what lands in between can 
 ## Loop
 
 1. Implement in the order of 手順. Before the review pass, `git diff --stat origin/<base>`; measured against [Google's small CLs guide](https://google.github.io/eng-practices/review/developer/small-cls.html), a large change gets a split proposal as a comment on the issue, and you wait.
-2. `/code-review --fix` until a round produces no findings, at most two rounds. Inside this loop, do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report.
+2. Review, then fix, until a round leaves no valid finding unaddressed, at most two rounds. A 手順 line that names `/code-review --fix` is this pass. Inside this loop, do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report. A reviewer that cannot be launched is named, with the error, in the verification record, and the pass continues with the ones that ran.
+
+   When Bugbot and Security Review can be launched as subagents, this is a Cursor session. On one diff, and before anything writes:
+   - `claude -p --permission-mode plan --permission-prompts none "/code-review"`. Local review, findings only. No `--fix`, no `ultra`, no `--comment`.
+   - Bugbot and Security Review, following the review-bugbot and review-security skills, with `Diff: branch changes` and `Base Branch` set to the issue's base when that base is not the repository default. They return findings and do not edit.
+   The three run together. Then apply the findings that hold and that the issue covers. The child session does not edit the tree.
+
+   Otherwise this is a Claude Code session: `/code-review --fix`, and not `ultra`. Bugbot and Security Review are absent here.
 3. Self-review against the review guide: consistency with the neighbouring code, what the called scripts and modules actually do, failure modes (a failure halfway through, a re-run, a stale checkout).
 4. Commit, one commit per change. Until the PR leaves draft you may reshape them; once it is out of draft or reviewed, changes go on as new commits (fixups, as CLAUDE.md sets out), even where 手順 says to keep one commit. The reason a value or an option was chosen goes into the PR description, never into a code comment; a code comment is only for a caveat that applies to the whole file. Push only if 制約 names the branch; otherwise report the branch and the push command, and wait for the person.
 5. Once the branch is on the remote, create the draft PR (the hook forces `--draft`) with the description below, then present the verification record below to the person in the session. If the person already opened the PR, update its description with the procedure below instead.
@@ -64,6 +71,7 @@ The description is for reviewers; what you checked is for the person who ran you
 ````markdown
 ## 確認したこと
 - 実行した検証: <what ran and what it showed>
+- 起動できなかったレビュー: <which reviewer, and the error; omit this line when every reviewer ran>
 - 未実行の検証(認証が要るため。人が実行する):
   ```bash
   <command>   # 期待: <result>
