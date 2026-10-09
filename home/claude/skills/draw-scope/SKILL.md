@@ -71,7 +71,7 @@ for f in ~/Downloads/<owner>-<repo>-<issue>-scope/*.svg; do
 done
 ```
 
-`scope-diagram-png` is installed by this repo's home-manager config. It loads Noto Sans CJK JP at weights 400 and 700. If it is missing, say so and stop. The user switches home-manager. Do not use another rasterizer.
+`scope-diagram-png` writes one PNG at the SVG's own pixel size. It is installed by this repo's home-manager config. It loads Noto Sans CJK JP at weights 400 and 700. If it is missing, say so and stop. The user switches home-manager. Do not use another rasterizer.
 
 ## Show the PNGs, then wait
 

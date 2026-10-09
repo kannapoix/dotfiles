@@ -21,17 +21,30 @@
         "$out"
     '';
 
+  # One opaque indexed PNG at the SVG's own pixel size, small enough to paste
+  # into a GitHub body. White fills pixels the SVG leaves transparent. Quantizing
+  # keeps at most 256 colors; dithering stays off so small text remains the
+  # antialiased glyphs resvg drew.
   scopeDiagramPng = pkgs.writeShellScriptBin "scope-diagram-png" ''
     set -euo pipefail
     if [ "$#" -ne 2 ]; then
       echo "usage: scope-diagram-png input.svg output.png" >&2
       exit 2
     fi
-    exec ${pkgs.resvg}/bin/resvg \
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
+    ${pkgs.resvg}/bin/resvg \
       --skip-system-fonts \
       --languages ja \
       --use-fonts-dir ${notoSansCjkJp} \
-      "$1" "$2"
+      --background '#ffffff' \
+      "$1" "$tmp/rgba.png"
+    ${pkgs.pngquant}/bin/pngquant \
+      --nofs \
+      --force \
+      --output "$2" \
+      256 \
+      "$tmp/rgba.png"
   '';
 
   baseSettings = {
