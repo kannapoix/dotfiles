@@ -11,14 +11,14 @@ Say in one line what you loaded: the PR, its stage, how many unresolved threads,
 ## Load
 
 - Resolve the PR: the argument, else `gh pr view --json number,headRefName,baseRefName,url,isDraft,reviews` for the current branch. It is **under review** once it is out of draft or has any review; otherwise it is a **draft**. Confirm the checked-out branch is the PR head and the working tree is clean before any commit.
-- Fetch unresolved review threads with `gh api graphql` (`reviewThreads` with `isResolved == false`; keep `path`, `line`, the thread `id`, and each comment's `databaseId`, author, and body). Present them in file order, oldest thread first.
-- A comment pasted into the chat ("In `<path>` at line N — review comment from @<login>: ...") joins the same ledger as the next item; match it to a fetched thread when one exists so the reply can land there.
+- Fetch unresolved review threads with `gh api graphql` (`reviewThreads` with `isResolved == false`; keep `path`, `line`, the thread `id`, and each comment's `databaseId`, HTML `url`, author, and body). The `url` is that comment's permalink (`#discussion_r` plus its `databaseId`). Present them in file order, oldest thread first.
+- A comment pasted into the chat ("In `<path>` at line N — review comment from @<login>: ...") joins the same ledger as the next item; match it to a fetched thread when one exists so the reply can land there. A match uses that thread's comment `url` for the header link. A comment with no fetched thread still gets the link when its `url` is known.
 - Read the whole discussion first. A reply the author already gave, or a change already made, counts as settled.
 
 ## One comment per turn
 
 ```
-**[N/M] <path>:<line> @<login>**
+**[N/M] `<path>:<line>` @<login>** — [review](<url>)
 
 > <the comment, trimmed to the claim>
 
@@ -28,6 +28,8 @@ Options: <a> / <b> / ...
 
 accept / modify / reject?
 ```
+
+The `[review](<url>)` link is that comment's HTML `url`. Do not invent a product-protocol URI.
 
 Then stop. Verify before judging: read the code the comment points at, what calls it, and the upstream docs or source when the claim rests on a tool's behavior. A wrong premise is called out with evidence regardless of who wrote it; a correct and important point is said to be so. Do not soften or inflate. When the reviewer is right about the problem but not the fix, say both.
 
