@@ -79,8 +79,8 @@ The type, written into the body file. It lives here until the team adopts it as 
 - <what must not change>
 
 ### 報告
-- PR の URL、変更の要約、人が実行する検証コマンドを本 issue にコメント
-- 人が結果をコメントしたら、完了条件を更新して issue を閉じる
+- PR の URL（未 push なら commit SHA と push コマンド）、変更の要約、人が実行する検証コマンドと期待結果、確認したこと、issue が覆っていない判断はセッションに提示する。本 issue へのコメントには書かない
+- 人が結果を伝えたら、完了条件を更新して issue を閉じる
 
 </details>
 ````

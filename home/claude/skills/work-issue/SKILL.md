@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run the review pass to convergence (Cursor - local /code-review findings only, plus Bugbot and Security Review; Claude Code - /code-review --fix), self-review, open a draft PR with the standard description, present the verification record in the session, report on the issue, and stop. A changed premise or a decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the current user message explicitly says to push. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
+description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run the review pass to convergence (Cursor - local /code-review findings only, plus Bugbot and Security Review; Claude Code - /code-review --fix), self-review, open a draft PR with the standard description, present the completion report in the session only, and stop. A changed premise or a decision the issue does not cover is a comment on the issue, not a guess. Never takes a PR out of draft, merges, or applies; pushes only when the current user message explicitly says to push. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
 argument-hint: <issue number or URL>
 ---
 
@@ -40,11 +40,21 @@ Issues are often cut together and worked in order, so what lands in between can 
    Otherwise this is a Claude Code session: `/code-review --fix`, and not `ultra`. Bugbot and Security Review are absent here.
 3. Self-review against the review guide: consistency with the neighbouring code, what the called scripts and modules actually do, failure modes (a failure halfway through, a re-run, a stale checkout).
 4. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
-5. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below, then present the verification record below to the person in the session. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
-6. Comment on the issue: the PR URL, a summary of the change, the commands the person runs with their expected results, and the decisions the issue did not cover, numbered and unchanged.
-7. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they comment results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
+5. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
+6. Present the report below in the session. Never as an issue or PR comment. A changed premise or a missing decision still gets a numbered comment on the issue and a stop; that is not this report.
+7. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they report results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
 
-Write the PR description, the PR comment, and the issue comment in the language of the issue.
+Write the PR description and the session report in the language of the issue.
+
+## Report
+
+After implementing, or when waiting for the person to push or apply, present all of the following in the session only:
+
+- the PR URL, or when not pushed the short SHA and the push command
+- a summary of the change
+- the commands the person runs, with args, env, and expected results
+- the verification record below
+- the decisions the issue did not cover, numbered and unchanged
 
 ## PR description
 
@@ -66,7 +76,7 @@ Write the PR description, the PR comment, and the issue comment in the language 
 
 ## Verification record
 
-The description is for reviewers; what you checked is for the person who ran you. Present it in the session right after creating the PR, never as a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
+The description is for reviewers; what you checked is for the person who ran you. It is part of the session report above, never a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
 
 ````markdown
 ## 確認したこと
