@@ -1,85 +1,90 @@
 ---
 name: draw-scope
-description: Draw a fixed-layout scope diagram of an architecture or tracking issue and the stacked PRs under it, as PNGs to paste into GitHub. Use when the user asks for a scope diagram, an overview of what an issue or PR covers, or a picture of a stack (/draw-scope, "担当範囲を図にして", "issue に貼る全体図", "stacked PR の範囲"). Also use it when reviewing a tracking issue or a stack and a shared picture of who adds which part would help. Do not use it for one-off charts, interactive HTML, or Canvas; those cannot be pasted into a GitHub body.
+description: Draw diagrams of a tracking issue and its sub-issues, or an issue and the stacked PRs under it, as PNGs to paste into GitHub - architecture, scope, sequence, or data flow, whichever explains the work - with one shared placement and one emphasis view per sub-issue or PR. Use when the user asks for a scope diagram, an overview of what an issue or PR covers, a picture of a stack, or a diagram for an issue body (/draw-scope, "担当範囲を図にして", "issue に貼る全体図", "stacked PR の範囲", "issue に図を貼って"). Also use it when reviewing a tracking issue or a stack and a shared picture of who adds which part would help. Do not use it for one-off charts, interactive HTML, or Canvas; those cannot be pasted into a GitHub body.
 argument-hint: <issue or PR URL>
 ---
 
-A scope diagram is one picture of a system, repeated. The first picture is the whole system. Each later picture is the same placement, with a different part emphasized, so a reviewer can flip between an issue and its PRs and see the scope move. The pictures are PNGs because they are pasted into GitHub. An interactive page cannot go there.
+These pictures go into GitHub issue and PR bodies, so they are PNGs; an interactive page cannot go there. The design is yours: the kind of diagram (architecture, sequence, data flow, or whatever explains this work best), the layout, the colors, the legend, and any notes. What is fixed is below.
 
-Say in one line what you are drawing: the scope issue, its parent if it has one, and the PRs in stack order.
+Say in one line what you are drawing: the issue at the top, which issues or PRs get a view, and in what order.
 
-## Look before you assign a box
+## What gets a picture
+
+- **A parent issue with sub-issues**: an overview on the parent, and one view per sub-issue on that sub-issue. If the user named only some sub-issues, draw views for those.
+- **An issue implemented by stacked PRs**: a view of the issue's scope on the issue, and one view per PR on that PR. If the issue has a parent, the overview goes on the parent. If it has none, the issue's own picture is the overview; do not also post one that highlights everything.
+- **A PR URL**: the issue it closes is the one to draw; continue as above.
+
+The sub-issues or PRs that get a view are the owners. Every part of the picture belongs to exactly one owner, or to none: already there, outside the work, or left for later.
+
+## Look before you assign a part
 
 The title is not evidence. Read the body, and the comments, because a later comment overrides the body where they disagree.
 
-- A PR URL: the issue it closes is the scope issue. `gh pr view <N> -R OWNER/REPO --json closingIssuesReferences,baseRefName,headRefName,title,body,files`
-- An issue URL that has implementing PRs: that issue is the scope issue. Its parent, if it has one, is where the overview goes.
-- A parent issue with several sub-issues, and the user did not say which: ask which sub-issue. Do not fan out across all of them.
-
 ```bash
-gh issue view <N> -R OWNER/REPO --json title,body,url
+gh issue view <N> -R OWNER/REPO --json title,body,comments,url
 gh api graphql -f query='{ repository(owner: "OWNER", name: "REPO") { issue(number: N) { parent { number title } subIssues(first: 50) { nodes { number title state } } } } }'
 gh pr list -R OWNER/REPO --search 'issue:N' --state all --json number,title,baseRefName,headRefName,state
+gh pr view <N> -R OWNER/REPO --json closingIssuesReferences,baseRefName,headRefName,title,body,files
 ```
 
 Stack order comes from branches, not from PR numbers. Order the PRs so each one's `baseRefName` is the previous one's `headRefName`. The first one's base is the branch the issue targets. If they do not form that chain, stop and ask. A merged PR stays in the order: "already in" means earlier in the stack, not "still open".
 
-For each PR, read the body and `gh pr diff <N> -R OWNER/REPO --name-only`. A box belongs to the PR that introduces it. A later PR that edits the same files does not take the box. Write the assignment in the conversation before drawing:
+For a PR, read the body and `gh pr diff <N> -R OWNER/REPO --name-only`. A part belongs to the PR that introduces it; a later PR that edits the same files does not take it. For a sub-issue, the part belongs to the sub-issue whose body says it builds it. Write the assignment in the conversation before drawing:
 
 ```text
-- <box>: #<pr> — <file or sentence that shows this PR adds it>
-- <box>: outside #<issue> — <why it is still in the picture>
+- <part>: #<owner> — <file or sentence that shows this owner adds it>
+- <part>: outside #<issue> — <why it is still in the picture>
 ```
 
 A row with no file and no sentence is a guess. Ask about that row instead of drawing it.
 
-## The pictures
+## What each view must get across
 
-One placement, then views that only change emphasis:
+A reader looking at one view, without the issue text, should be able to tell:
 
-- **Overview.** Every box in its resting style. This goes on the parent issue. If the scope issue has no parent, it goes on the scope issue, and you do not also post a second picture that paints every box blue.
-- **Issue scope.** Boxes the issue owns are blue. The rest stay visible and gray.
-- **One picture per PR.** Paint from the stack, in this order. Do not color a box by hand.
+- which parts this owner adds, and which parts are someone else's or already there;
+- what exists today and what is not built yet;
+- the order the owners can go in, when that order matters and the parts alone do not show it;
+- what this owner's work includes that the picture does not show, when there is such a thing.
 
-```text
-青い塗り     = この PR が追加する
-通常の実線   = 先行 PR ですでに入っている
-薄い破線     = 後続 PR。まだ入っていない
-グレー       = 対象 issue の範囲外
-```
+Write the labels in the language of the issue.
 
-When the issue is in Japanese, the legend is `この PR (#N)`, `先行 PR で入っている`, `後続 PR。まだない`, `#N の範囲外`. Omit a swatch that does not appear. Arrows and coordinates stay put between views. A box the architecture itself marks as not built yet is dashed in the overview and when it is gray.
+## Constraints
+
+- Every view shares one placement: the same parts, positions, and arrows. Views differ only in emphasis. Render all of them from one script, so the placement cannot drift between views.
+- In a PR view, parts from earlier PRs in the stack are already in, and parts from later PRs are not yet. Derive that from the assignment; do not decide it per picture.
+- Set `font-family="Noto Sans CJK JP"` and use font weights 400 and 700 only. The rasterizer loads that face and no system fonts, so any other family renders without glyphs.
+- The rasterizer is resvg, which renders static SVG: no `<foreignObject>` and no automatic text wrapping. Break long lines yourself.
 
 ## Draw
 
-Write `~/Downloads/<owner>-<repo>-<issue>-scope/draw.py`. If it is already there, edit it and keep the coordinates. The script owns the layout and writes one SVG per view next to itself. Colors:
+Work in the session's scratchpad directory, or a `mktemp -d` directory when the session has none. The Write tool cannot create files in `~/Downloads`. If an earlier run left a script under `~/Downloads/<owner>-<repo>-<N>-*/`, copy it into the work directory and edit it there, so the placement already posted stays put.
 
-```python
-plain = ("#ffffff", "#475569", 1.2, None)       # overview
-this  = ("#dbeafe", "#2563eb", 2.2, None)       # blue fill
-done  = ("#ffffff", "#334155", 1.6, None)       # already in
-later = ("#f8fafc", "#cbd5e1", 1.0, "6 4")      # not yet
-out   = ("#f8fafc", "#cbd5e1", 1.0, None)       # outside the issue
-```
-
-`this` and `done` get a badge with the PR id. `this` is a blue badge, `done` is a white one. Set the SVG `font-family` to `Noto Sans CJK JP`.
+Run the script so it writes one SVG per view next to itself, then rasterize:
 
 ```bash
-python3 ~/Downloads/<owner>-<repo>-<issue>-scope/draw.py
-for f in ~/Downloads/<owner>-<repo>-<issue>-scope/*.svg; do
+for f in "$work"/*.svg; do
   scope-diagram-png "$f" "${f%.svg}.png"
 done
 ```
 
-`scope-diagram-png` writes one PNG at the SVG's own pixel size. It is installed by this repo's home-manager config. It loads Noto Sans CJK JP at weights 400 and 700. If it is missing, say so and stop. The user switches home-manager. Do not use another rasterizer.
+`scope-diagram-png` writes one PNG at the SVG's own pixel size. It is installed by this repo's home-manager config. If it is missing, say so and stop; the user switches home-manager. Do not use another rasterizer.
+
+Read every PNG yourself before showing it: clipped or overlapping text, arrows through labels, de-emphasized parts that are no longer legible. Fix the script and re-render until none are left. Then keep the script and the PNGs with Bash:
+
+```bash
+dest=~/Downloads/<owner>-<repo>-<N>-diagram
+mkdir -p "$dest"
+cp "$work"/<script> "$work"/*.png "$dest"/
+```
 
 ## Show the PNGs, then wait
 
-Put each PNG in the conversation, with the path of `draw.py` and which issue or PR would receive which file. Stop there. A correction is an edit to `draw.py` and a re-run, not an upload.
+Show each PNG to the user in the conversation, with the path of the saved script and which issue or PR would receive which file. Stop there. A correction is an edit to the script in the work directory, a re-render, and a fresh copy, not an upload.
 
 ## After they accept
 
-Upload each PNG, then insert it under the opening line of the body it belongs to. Do not rewrite the body. The overview goes on the parent (or on the scope issue, when it has no parent). The issue-scope picture goes on the scope issue. Each PR picture goes on that PR.
+Upload each PNG, then insert it under the opening line of the body it belongs to. Do not rewrite the body.
 
 ```bash
 repo_id=$(gh api repos/OWNER/REPO --jq .id)
