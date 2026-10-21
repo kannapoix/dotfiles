@@ -11,11 +11,12 @@ argument-hint, are dropped; the rest of SKILL.md is kept as written.
 A skill claude.ai would refuse fails the run instead.
 
 claude.ai has no upload API, so the upload stays a manual step. What
-claude.ai holds is read back from Claude Code's one-way sync of it into
-~/.claude/skills/synced, which runs while a Claude Code session is open.
-status prints each skill as current, outdated, or missing there and
-exits 1 when any is not current. check does the same, then asks in a
-dialog whether to open the ones that are not current in Claude.
+claude.ai holds is read back from two local copies of it: the desktop
+app's, refreshed as soon as a skill is imported there, and Claude Code's
+one-way sync into ~/.claude/skills/synced, which can lag by hours.
+status prints each skill as current when either copy matches, outdated,
+or missing, and exits 1 when any is not current. check does the same,
+then offers to open the ones that are not current in Claude.
 """
 
 import json
@@ -35,6 +36,10 @@ ALLOWED_KEYS = {
 NAME = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 DEFAULT_BUNDLES = Path.home() / ".local/share/claude-ai-skills"
 SYNCED = Path.home() / ".claude/skills/synced"
+DESKTOP = (
+    Path.home() / "Library/Application Support/Claude"
+    / "local-agent-mode-sessions/skills-plugin"
+)
 
 
 def split(text):
@@ -110,17 +115,30 @@ def pack(skills_dir, out_dir, names):
                 archive.writestr(info, data)
 
 
-def synced_root():
+def newest(manifests):
     # One bucket per organization the account has synced from; the one
     # refreshed last is the organization in use.
     buckets = []
-    for manifest in SYNCED.glob("*/manifest.json"):
+    for manifest in manifests:
         try:
             updated = json.loads(manifest.read_text())["lastUpdated"]
         except (OSError, ValueError, KeyError):
             continue
         buckets.append((updated, manifest.parent))
     return max(buckets)[1] if buckets else None
+
+
+def synced_roots():
+    # The CLI keeps each skill next to its bucket's manifest; the desktop
+    # app nests buckets as org/account and keeps skills under skills/.
+    roots = []
+    cli = newest(SYNCED.glob("*/manifest.json"))
+    if cli:
+        roots.append(cli)
+    desktop = newest(DESKTOP.glob("*/*/manifest.json"))
+    if desktop:
+        roots.append(desktop / "skills")
+    return roots
 
 
 def snapshot(folder):
@@ -134,21 +152,26 @@ def snapshot(folder):
     return meta, body.strip(), files
 
 
+def matches(ours, theirs):
+    return (
+        {key: theirs[0].get(key) for key in ours[0]} == ours[0]
+        and theirs[1:] == ours[1:]
+    )
+
+
 def statuses(bundles):
-    root = synced_root()
-    if root is None:
-        print(f"no claude.ai sync under {SYNCED}", file=sys.stderr)
+    roots = synced_roots()
+    if not roots:
+        print("no local copy of claude.ai's skills", file=sys.stderr)
     result = {}
     for skill in sorted(bundles.glob("*.skill")):
         name = skill.stem
         ours = snapshot(bundles / name)
-        theirs = snapshot(root / name) if root else None
-        if theirs is None:
+        copies = [snapshot(root / name) for root in roots]
+        copies = [copy for copy in copies if copy is not None]
+        if not copies:
             result[name] = "missing"
-        elif (
-            {key: theirs[0].get(key) for key in ours[0]} == ours[0]
-            and theirs[1:] == ours[1:]
-        ):
+        elif any(matches(ours, copy) for copy in copies):
             result[name] = "current"
         else:
             result[name] = "outdated"
@@ -178,14 +201,24 @@ def check(bundles, result):
     message = (
         "These skills differ from what claude.ai has:\n\n"
         + "\n".join(lines)
-        + "\n\nOpening one in Claude starts its upload."
+        + "\n\nThey open in Claude one at a time, each starting its upload."
     )
     choice = dialog(message, ["Later", "Show in Finder", "Open in Claude"])
     files = [str(bundles / f"{name}.skill") for name in stale]
-    if choice == "Open in Claude":
-        subprocess.run(["open", "-a", "Claude", *files])
-    elif choice == "Show in Finder":
+    if choice == "Show in Finder":
         subprocess.run(["open", "-R", *files])
+    if choice != "Open in Claude":
+        return
+    # Claude imports only the last of several files opened together, so each
+    # one waits until the user is done with the one before.
+    for i, name in enumerate(stale):
+        if i and dialog(
+            f"Finish importing {stale[i - 1]} in Claude, then open"
+            f" {name} ({i + 1} of {len(stale)}).",
+            ["Stop", "Open next"],
+        ) != "Open next":
+            return
+        subprocess.run(["open", "-a", "Claude", files[i]])
 
 
 def main():
