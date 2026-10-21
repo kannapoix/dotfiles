@@ -47,6 +47,18 @@
       "$tmp/rgba.png"
   '';
 
+  # The skills that also work in a claude.ai chat, with no local shell, gh, or
+  # dotfiles checkout behind them.
+  claudeAiSkills = ["explain-diff" "grilling" "notion-writing" "one-by-one" "review-companion"];
+
+  claudeAiSkillsTool = pkgs.writers.writePython3Bin "claude-ai-skills" {libraries = [pkgs.python3Packages.pyyaml];} (builtins.readFile ../claude/bin/claude-ai-skills.py);
+
+  # A .skill per entry for the Claude desktop app to import, next to the
+  # unzipped folder the check compares with claude.ai's copy.
+  claudeAiSkillBundles = pkgs.runCommand "claude-ai-skills" {} ''
+    ${claudeAiSkillsTool}/bin/claude-ai-skills pack ${../claude/skills} "$out" ${lib.escapeShellArgs claudeAiSkills}
+  '';
+
   baseSettings = {
     attribution.commit = "";
     # The Bash tool otherwise runs the login shell (zsh here) with its profile
@@ -145,7 +157,26 @@ in {
 
   config = {
     home.sessionPath = ["$HOME/.local/bin"];
-    home.packages = [ghBodyEdit scopeDiagramPng];
+    home.packages = [ghBodyEdit scopeDiagramPng claudeAiSkillsTool];
+    home.file.".local/share/claude-ai-skills".source = claudeAiSkillBundles;
+
+    # claude.ai has no upload API, so the upload is left to the user: the
+    # check asks to open whatever claude.ai is missing or behind on. The bundle
+    # path changes with the skills, so a switch that changes one reloads the
+    # agent and RunAtLoad asks right away; the daily run is the reminder.
+    launchd.agents.claude-ai-skills = {
+      enable = true;
+      config = {
+        ProgramArguments = ["${claudeAiSkillsTool}/bin/claude-ai-skills" "check" "${claudeAiSkillBundles}"];
+        RunAtLoad = true;
+        StartCalendarInterval = [
+          {
+            Hour = 10;
+            Minute = 0;
+          }
+        ];
+      };
+    };
 
     programs.claude-code = {
       enable = true;
