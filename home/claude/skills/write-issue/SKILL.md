@@ -54,7 +54,7 @@ The type, written into the body file. It lives here until the team adopts it as 
 <summary>🤖 エージェント向け指示</summary>
 
 ### 前提の確認
-- <a condition to verify first; stop and comment on this issue if it fails>
+- <a condition to verify first; if it fails, stop and report in the session, not on this issue>
 - 作業ブランチは `origin/main` から `<branch>` を切る
 
 ### 手順
