@@ -32,7 +32,6 @@
     gh
     dig
     klog-time-tracker
-    electrum
     btcdeb
     delta
     jq
@@ -43,11 +42,11 @@
     openssh
   ];
 
-  programs.ssh.matchBlocks = {
+  programs.ssh.settings = {
     "i-* mi-*" = {
-      proxyCommand = "sh -c \"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
-      identityAgent = "~/.ssh/agent.sock";
-      addKeysToAgent = "yes";
+      ProxyCommand = "sh -c \"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"";
+      IdentityAgent = "~/.ssh/agent.sock";
+      AddKeysToAgent = "yes";
     };
   };
 

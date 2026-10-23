@@ -36,7 +36,6 @@
     gh
     dig
     klog-time-tracker
-    electrum
     btcdeb
     delta
     jq

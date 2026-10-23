@@ -7,17 +7,14 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
-      "ignore-unknown" = lib.hm.dag.entryBefore ["github.com" "i-* mi-*"] {
-        match = "all";
-        extraOptions.IgnoreUnknown = "UseKeychain";
+    settings = {
+      "Match all" = lib.hm.dag.entryBefore ["github.com" "i-* mi-*"] {
+        IgnoreUnknown = "UseKeychain";
       };
       "github.com" = {
-        identityFile = "~/.ssh/id_ed25519_github";
-        extraOptions = {
-          UseKeychain = "yes";
-          AddKeysToAgent = "yes";
-        };
+        IdentityFile = "~/.ssh/id_ed25519_github";
+        UseKeychain = "yes";
+        AddKeysToAgent = "yes";
       };
     };
   };
