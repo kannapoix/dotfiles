@@ -7,7 +7,7 @@
 }: let
   # direnv 2.36.0 pinned due to test failures in latest version.
   # Remove this pin once https://github.com/NixOS/nixpkgs/issues/507531 is resolved.
-  pkgs-direnv = import inputs.nixpkgs-direnv {inherit (pkgs) system;};
+  pkgs-direnv = import inputs.nixpkgs-direnv {inherit (pkgs.stdenv.hostPlatform) system;};
 in {
   programs.fzf = {
     enable = true;
