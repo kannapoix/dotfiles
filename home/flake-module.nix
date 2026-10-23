@@ -8,9 +8,6 @@
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
-          nixpkgs.config.permittedInsecurePackages = [
-            "python3.12-ecdsa-0.19.1"
-          ];
         }
         ./mbp-2021/default.nix
       ];
@@ -24,9 +21,6 @@
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
-          nixpkgs.config.permittedInsecurePackages = [
-            "python3.12-ecdsa-0.19.1"
-          ];
         }
         ./work-mac/default.nix
       ];
