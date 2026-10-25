@@ -155,6 +155,8 @@ in {
     description = "Host-specific Claude Code settings, deep-merged into the base settings.";
   };
 
+  options.modules.claude.claudeAiSkillsCheck = lib.mkEnableOption "the launchd agent that asks to upload skills claude.ai is missing or behind on";
+
   config = {
     home.sessionPath = ["$HOME/.local/bin"];
     home.packages = [ghBodyEdit scopeDiagramPng claudeAiSkillsTool];
@@ -165,7 +167,7 @@ in {
     # path changes with the skills, so a switch that changes one reloads the
     # agent and RunAtLoad asks right away; the daily run is the reminder.
     launchd.agents.claude-ai-skills = {
-      enable = true;
+      enable = cfg.claudeAiSkillsCheck;
       config = {
         ProgramArguments = ["${claudeAiSkillsTool}/bin/claude-ai-skills" "check" "${claudeAiSkillBundles}"];
         RunAtLoad = true;

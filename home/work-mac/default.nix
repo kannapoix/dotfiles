@@ -26,6 +26,7 @@
   modules.claude.settings.enabledPlugins = {
     "aikido@claude-plugins-official" = true;
   };
+  modules.claude.claudeAiSkillsCheck = true;
 
   home.packages = with pkgs; [
     vim
