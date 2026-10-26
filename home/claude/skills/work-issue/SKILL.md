@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session, from the issue alone. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Pushes only when the current user message explicitly says to push; never takes a PR out of draft, merges, or applies. Counterpart of write-issue.
+description: 'Carry out one issue as the execution session, from the issue alone. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Pushes only when the current user message explicitly says to push; never takes a PR out of draft, merges, or applies. Counterpart of write-issue.'
 argument-hint: <issue number or URL>
 ---
 
