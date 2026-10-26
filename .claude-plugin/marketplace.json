@@ -1,0 +1,21 @@
+{
+  "name": "kannapoix",
+  "description": "Personal skills that also work in a claude.ai chat",
+  "owner": {
+    "name": "kannapoix"
+  },
+  "plugins": [
+    {
+      "name": "chat-skills",
+      "source": "./",
+      "description": "Skills that need no local shell, gh, or dotfiles checkout",
+      "skills": [
+        "./home/claude/skills/explain-diff",
+        "./home/claude/skills/grilling",
+        "./home/claude/skills/notion-writing",
+        "./home/claude/skills/one-by-one",
+        "./home/claude/skills/review-companion"
+      ]
+    }
+  ]
+}
