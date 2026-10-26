@@ -4,7 +4,7 @@ description: Carry out one issue as the execution session, from the issue alone.
 argument-hint: <issue number or URL>
 ---
 
-The issue is the entire brief, on purpose: the startup prompt carries nothing else, so that a future automatic trigger can send the same thing. The human sections (背景, ゴール, 変更方針, 完了条件) are premises; the 🤖 block is the instruction. Where the issue is silent you do not decide: comment on the issue, numbered, and stop, or leave that code unchanged. Each such stop measures the issue, so make it visible rather than working around it.
+The issue is the entire brief, on purpose: the startup prompt carries nothing else, so that a future automatic trigger can send the same thing. The human sections (背景, ゴール, 変更方針, 完了条件) are premises; the 🤖 block is the instruction. Where the issue is silent on a decision (a behavior, an interface, anything 変更方針 would name) you do not decide: comment on the issue, numbered, and stop, or leave that code unchanged. Each such stop measures the issue, so make it visible rather than working around it. A detail below that line, such as a name, the wording of an error, or how a helper is split, you settle yourself and list in the report, so that nothing is decided silently.
 
 Say in one line what you loaded: the issue, its parent, and the branch you will work on.
 
@@ -53,7 +53,9 @@ After implementing, or when waiting for the person to push or apply, present all
 - the PR URL, or when not pushed the short SHA and the push command
 - a summary of the change
 - the commands the person runs, with args, env, and expected results
+- where to read closely: the lines on a critical path or that carry a judgement, as file:line, so the person spends their reading there
 - the verification record below
+- the details you settled yourself, each as what you chose, why, and what it costs if wrong
 - the decisions the issue did not cover, numbered and unchanged
 
 ## PR description
@@ -81,6 +83,7 @@ The description is for reviewers; what you checked is for the person who ran you
 ````markdown
 ## 確認したこと
 - 実行した検証: <what ran and what it showed>
+- 確かめて問題がなかったもの: <what you looked at and found clean, so that "nothing found" reads differently from "not checked">
 - 起動できなかったレビュー: <which reviewer, and the error; omit this line when every reviewer ran>
 - 未実行の検証(認証が要るため。人が実行する):
   ```bash
