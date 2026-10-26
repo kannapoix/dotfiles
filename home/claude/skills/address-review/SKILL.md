@@ -1,6 +1,6 @@
 ---
 name: address-review
-description: Work through review comments on the user's own pull request one at a time - verify each claim against the code, let the author decide accept / modify / reject, aim each fix at the commit it belongs to as a fixup (squashed on the spot only while the PR is an unreviewed draft), and draft the reply. Author-side counterpart of review-companion. Use with a PR URL or number, or when the user pastes a review comment and asks whether it holds ("このコメント妥当?", "レビュー対応したい", "address the review"). Never pushes.
+description: Work through review comments on the user's own pull request, one comment per turn, with the author deciding each. Use with a PR URL or number, or when the user pastes a review comment and asks whether it holds ("このコメント妥当?", "レビュー対応したい", "address the review"). Never pushes. Author-side counterpart of review-companion.
 argument-hint: "[PR URL or number; omit for the current branch's PR]"
 ---
 

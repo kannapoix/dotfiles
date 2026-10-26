@@ -1,6 +1,6 @@
 ---
 name: work-issue
-description: Carry out one issue as the execution session - check that the issue still holds against what landed since it was written, follow its "🤖 エージェント向け指示" block, run the review pass to convergence (Cursor - local /code-review findings only, plus Bugbot and Security Review; Claude Code - /code-review --fix), self-review, open a draft PR with the standard description, present the completion report in the session only, and stop. A changed premise is a stop reported in the session, never on the issue, and a decision the issue does not cover is a comment on the issue; neither is a guess. Never takes a PR out of draft, merges, or applies; pushes only when the current user message explicitly says to push. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Counterpart of write-issue.
+description: Carry out one issue as the execution session, from the issue alone. Use with an issue number or URL ("issue #N に取り組む", "work on issue 123"). Pushes only when the current user message explicitly says to push; never takes a PR out of draft, merges, or applies. Counterpart of write-issue.
 argument-hint: <issue number or URL>
 ---
 

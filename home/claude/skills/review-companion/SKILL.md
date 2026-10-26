@@ -1,6 +1,6 @@
 ---
 name: review-companion
-description: Companion for a human reviewer working through a pull request, diff, design document, spec, or proposal. Not an automated review - findings are walked through one at a time, pushback is verified against the real thing, and the reviewer writes the comments. Never posts anything.
+description: Companion for a human reviewer working through a pull request, diff, design document, spec, or proposal, when the user wants help understanding or checking what they review rather than an automated review. The reviewer owns the verdict and writes the comments. Never posts anything.
 argument-hint: <URL or path> [what you want, e.g. "help me understand X"]
 ---
 

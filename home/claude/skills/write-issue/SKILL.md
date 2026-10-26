@@ -1,6 +1,6 @@
 ---
 name: write-issue
-description: Write a sub-issue that a separate execution agent can carry out with no context beyond the issue itself - decisions for people on top, a fixed "🤖 エージェント向け指示" block below - and create it under its parent with gh and the sub-issue API. Use in a planning session when work is being handed to an execution agent ("issue にして", "sub-issue を切って", "write an issue for this"), and when a changed decision has to be carried into the sibling issues. Counterpart of work-issue.
+description: Write a sub-issue that a separate execution agent can carry out from the issue alone, and create it under its parent. Use in a planning session when work is being handed to an execution agent ("issue にして", "sub-issue を切って", "write an issue for this"), and when a changed decision has to be carried into the sibling issues. Creates nothing until the user approves the draft. Counterpart of work-issue.
 argument-hint: "<parent issue number or the goal, or an existing sub-issue to update>"
 ---
 
