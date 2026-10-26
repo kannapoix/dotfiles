@@ -14,6 +14,7 @@ Say in one line what you are doing: a new sub-issue under #N, or an update of #M
   ```bash
   gh api graphql -f query='{ repository(owner: "<owner>", name: "<repo>") { issue(number: <parent>) { subIssues(first: 50) { nodes { number title state } } } } }'
   ```
+- An issue is closed by the PR that merges it. When the work leaves something after the merge (a manual step such as switching a ruleset, or a check on the real environment), split it: a parent that holds that step, and a child the PR closes.
 - Read the code, docs, and design notes the work touches, and the project's terminology conventions (CLAUDE.md, memory). Point at existing documents instead of restating them.
 - A problem you discover on the way (a measurement to take, a guard that is missing, a refactor) is a separate issue, not a section of this one.
 
@@ -91,6 +92,8 @@ No 人のゲート, スコープ外, or 依存 sections: an ordering constraint 
 
 - Title: a verb and its object that someone without the background understands.
 - The human sections hold decisions only; every "how" is in the agent block. 手順, 検証, and 制約 name the same decisions as 変更方針, ゴール, and 完了条件.
+- The human sections read without the code: behavior, contracts, and the reasons for them. Job names, lists of paths, and conditional expressions go in the agent block. The issue is what a reviewer reads from the PR, and later the record of why the change was made, so it has to outlast the code it describes.
+- Nothing remains after the merge; if something does, the issue is split as in Prepare.
 - 手順 prescribes no history: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage, and an issue that repeats it gets followed past the draft stage too.
 - Terms follow the project's conventions.
 - Consistent with the sibling issues: same terms, no contradicting decisions.
