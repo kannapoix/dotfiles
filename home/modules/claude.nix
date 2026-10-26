@@ -185,6 +185,7 @@ in {
       package = null;
       settings = lib.recursiveUpdate baseSettings cfg.settings;
       context = ../claude/CLAUDE.md;
+      agentsDir = ../claude/agents;
       skills = lib.mapAttrs' (name: _: lib.nameValuePair name (../claude/skills + "/${name}")) (
         lib.filterAttrs (_: type: type == "directory") (builtins.readDir ../claude/skills)
       );

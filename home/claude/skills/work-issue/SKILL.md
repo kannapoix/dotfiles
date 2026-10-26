@@ -38,11 +38,12 @@ Issues are often cut together and worked in order, so what lands in between can 
    The three run together. Then apply the findings that hold and that the issue covers. The child session does not edit the tree.
 
    Otherwise this is a Claude Code session: `/code-review --fix`, and not `ultra`. Bugbot and Security Review are absent here.
-3. Self-review against the review guide: consistency with the neighbouring code, what the called scripts and modules actually do, failure modes (a failure halfway through, a re-run, a stale checkout).
-4. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
-5. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
-6. Present the report below in the session. Never as an issue or PR comment. A changed premise is still a numbered stop in the session, as in the check above, and a missing decision a numbered comment on the issue and a stop; neither is this report.
-7. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they report results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
+3. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠.
+4. Verify with the `verifier` subagent, from a clean tree. Give it the issue, the base as `origin/<base>`, and the branch, and nothing of what you did or why: it judges the diff cold, so your account would only steer it. On `accepted-with-reservations`, go on without changing the tree; the reservations reach the person through the verdict in the verification record. On `rejected`, fix what `must_fix` names that the issue covers, commit as in 3, and verify again; after a second rejection, stop and put both verdicts in the report. A `must_fix` that needs a decision the issue does not cover stays unchanged and goes into the report. A verifier that cannot be launched is named, with the error, in the verification record.
+5. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
+6. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
+7. Present the report below in the session. Never as an issue or PR comment. A changed premise is still a numbered stop in the session, as in the check above, and a missing decision a numbered comment on the issue and a stop; neither is this report.
+8. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they report results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
 
 Write the PR description and the session report in the language of the issue.
 
@@ -82,6 +83,7 @@ The description is for reviewers; what you checked is for the person who ran you
 
 ````markdown
 ## 確認したこと
+- 検証役の判定: <the verifier's block, verbatim; both blocks when it rejected once>
 - 実行した検証: <what ran and what it showed>
 - 確かめて問題がなかったもの: <what you looked at and found clean, so that "nothing found" reads differently from "not checked">
 - 起動できなかったレビュー: <which reviewer, and the error; omit this line when every reviewer ran>
