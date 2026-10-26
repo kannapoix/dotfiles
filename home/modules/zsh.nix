@@ -6,7 +6,10 @@
 }: {
   programs.zsh = {
     enable = true;
-    setOptions = ["NONOMATCH"];
+    # Prezto's directory and completion modules turn EXTENDED_GLOB on, which makes
+    # `#` a glob operator: `.#devenv` matches a `.devenv` directory. Its own
+    # functions and the plugins here enable it locally, and these run after Prezto.
+    setOptions = ["NONOMATCH" "NO_EXTENDED_GLOB"];
     # Prezto sets LESS only when it is empty; this is its default without -S (chop long lines).
     sessionVariables.LESS = "-g -i -M -R -w -X -z-4";
     prezto = {
