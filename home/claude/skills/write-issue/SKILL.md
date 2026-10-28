@@ -46,7 +46,7 @@ Show the cut as a numbered list. For each piece, first in plain words: what it d
 
 ### 5. Draft the sub-issues
 
-Draft every piece from `sub-issue.md` in this skill's directory, each in its own file in the scratchpad. 背景 links to the parent's spec for the reasons; 変更方針 holds only decisions this issue makes; 完了条件 holds only what the diff does not show. Every "how" goes in the agent block, and 手順, 検証, and 制約 name the same decisions as the human sections.
+Draft every piece from `sub-issue.md` in this skill's directory, each in its own file in the scratchpad. 背景 links to the parent's spec for the reasons; 変更方針 holds only decisions this issue makes; 完了条件 holds only what the diff does not show. 確かめ方 holds one or two conditions that show the diff is right, such as a test that passes or a behavior in a named case; a piece without one is not ready to draft. No steps and no commands: which files to touch, in what order, and how to run the checks are the execution session's to find. A condition to verify first is a fact in 背景, and what must not change is a 変更方針 line (「…はしない」).
 
 ### 6. Check
 
@@ -99,19 +99,19 @@ gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@status.md
 Write issues in Japanese.
 
 - No space between a numeral and its counter (「1つ」「2回目」); a space after `#N`.
-- The human sections hold decisions only and read without the code: behavior, contracts, and their reasons. Job names, lists of paths, and conditional expressions go in the agent block. The issue is what a reviewer reads from the PR, and later the record of why, so it has to outlast the code.
+- The human sections hold decisions only and read without the code: behavior, contracts, and their reasons. Job names, lists of paths, and conditional expressions stay out; the execution session finds them in the code. The issue is what a reviewer reads from the PR, and later the record of why, so it has to outlast the code.
 - A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
 - Short nested bullets. Start as a small skeleton; add a table or a diagram only when asked.
 - No predicted values before measurement: 「未計測。#N で計測して決める」.
 - No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
-- 完了条件 holds only what the diff does not show. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
-- The agent block carries only what is this issue's own: preconditions, steps that name files, verification commands, and what must not change. work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of it, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and 手順 follows that order. API tests the agent runs itself, so they go under 検証(エージェントが実行する).
-- No history in 手順: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage.
+- 完了条件 holds only what the diff does not show; what the diff shows is 確かめ方. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
+- work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of the issue, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and the person's checks are 完了条件 lines in that order. An API test the agent can run itself is a 確かめ方 condition.
+- No history in the issue: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage.
 - Title: a verb and its object that someone without the background understands.
 
 ## Showing in chat
 
-Show only what the user decides, as rendered markdown, never a fenced dump of a body and never the agent block. Bundle the questions that are the user's to decide into one message and settle everything else yourself; explain each option or list item in plain words before asking about it. For sub-issues, show each one's title, 背景, ゴール, 変更方針, and 完了条件, then one sentence on which decisions went into the agent blocks. Do not list small derived tasks; end with at most two next steps on the main line of the work.
+Show only what the user decides, as rendered markdown, never a fenced dump of a body. Bundle the questions that are the user's to decide into one message and settle everything else yourself; explain each option or list item in plain words before asking about it. For sub-issues, show each one's title, 背景, ゴール, 変更方針, 確かめ方, and 完了条件. Do not list small derived tasks; end with at most two next steps on the main line of the work.
 
 ## Writing to GitHub
 
@@ -119,7 +119,7 @@ Create nothing before the stage's approval. The user edits issues on the web at 
 
 ## Update
 
-When a decision changes, change the spec first, then every sub-issue it reaches, human sections and agent block in the same edit. Show the proposal as a draft is shown, list the sibling issues it reaches, and update them together on approval.
+When a decision changes, change the spec first, then every sub-issue it reaches, every section in the same edit. Show the proposal as a draft is shown, list the sibling issues it reaches, and update them together on approval.
 
 ## Measure
 
