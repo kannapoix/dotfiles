@@ -30,6 +30,8 @@ Issues are often cut together and worked in order, so what lands in between can 
 ## Loop
 
 1. Implement in the order of 手順. Before the review pass, `git diff --stat origin/<base>`; measured against [Google's small CLs guide](https://google.github.io/eng-practices/review/developer/small-cls.html), a large change gets a split proposal as a comment on the issue, and you wait.
+
+   Before using an external API, option, or library, read its version from the lock file (`flake.lock` for nixpkgs, `go.mod`, `Cargo.lock`, and the like) and check how it behaves in the official documentation for that version; where the documentation is thin, the source at the locked version will do. What you could not confirm goes into the verification record. The evidence goes in 選定の根拠 or the report, not as a URL in a code comment.
 2. Review once, for findings only, then fix what matters. The pass is `/code-review`, without `--fix` and not `ultra`; a 手順 line that names `/code-review --fix` is this pass, run the same way. Rate each finding that holds by what happens to the person who uses the change as it stands, not by the severity the reviewer gave: important when they would get a wrong result, be led into a wrong check, lose data, or hit a step that fails; minor otherwise. Fix the important ones in one pass, with no second review; the verifier in 4 is the next check. Before fixing one that a test can show, write a test that fails on it. Where no test can, as in prose or a runbook, confirm the fix with a syntax check or by running it, stubbing anything outside the worktree. Minor findings stay unfixed and go into the report, so the diff carries only what the issue and the important findings need. Do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A reviewer that cannot be launched is named, with the error, in the verification record.
 3. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠.
 4. Verify with the `verifier` subagent, from a clean tree. Give it the issue, the base as `origin/<base>`, and the branch, and nothing of what you did or why: it judges the diff cold, so your account would only steer it. On `accepted-with-reservations`, go on without changing the tree; the reservations reach the person through the verdict in the verification record. On `rejected`, fix what `must_fix` names that the issue covers, commit as in 3, and verify again; after a second rejection, stop and put both verdicts in the report. A `must_fix` that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A verifier that cannot be launched is named, with the error, in the verification record.
@@ -66,7 +68,7 @@ After implementing, or when waiting for the person to push or apply, present all
 <only when a choice between candidates needs justifying; a table lists only the candidates that affect the decision>
 ````
 
-- A term a reader would look up is linked once, at its first occurrence, to the official documentation. Open the page and confirm the term is on it before linking.
+- A term a reader would look up is linked once, at its first occurrence, to the official documentation. Open the page and confirm the term is on it before linking. Prefer the documentation to a link into source, and for a locked dependency, the page for the locked version where one exists.
 - A value not yet measured is written as 「未計測。#N で計測して決める」, with no predicted number or table.
 - A decision made with the user during the session goes into the description when it is made, not at the end.
 - No 確認したこと section: reviewers do not need it. It goes in the verification record below.
@@ -80,6 +82,7 @@ The description is for reviewers; what you checked is for the person who ran you
 - 検証役の判定: <the verifier's block, verbatim; both blocks when it rejected once>
 - 実行した検証: <what ran and what it showed>
 - 確かめて問題がなかったもの: <what you looked at and found clean, so that "nothing found" reads differently from "not checked">
+- 根拠が見つからなかったもの: <each external API or option whose behavior you could not confirm for the locked version, and what you assumed; omit this line when there were none>
 - 起動できなかったレビュー: <which reviewer, and the error; omit this line when every reviewer ran>
 - 未実行の検証(認証が要るため。人が実行する):
   ```bash
