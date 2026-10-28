@@ -15,6 +15,7 @@ Say in one line what you are doing: a new sub-issue under #N, or an update of #M
   gh api graphql -f query='{ repository(owner: "<owner>", name: "<repo>") { issue(number: <parent>) { subIssues(first: 50) { nodes { number title state } } } } }'
   ```
 - An issue is closed by the PR that merges it. When the work leaves something after the merge (a manual step such as switching a ruleset, or a check on the real environment), split it: a parent that holds that step, and a child the PR closes.
+- When more than one piece is left under the parent, show the cut in chat before drafting any of it: a numbered list giving each piece's title, the sibling that has to finish first (or none), and what it delivers that someone can check on its own. Ask once whether the granularity is right, whether each ordering is real, and what to merge or split. A step that remains after a merge stays with the parent, as above, and is not a piece. Draft the pieces one at a time once the user has settled the cut.
 - Read the code, docs, and design notes the work touches, and the project's terminology conventions (CLAUDE.md, memory). Point at existing documents instead of restating them.
 - A problem you discover on the way (a measurement to take, a guard that is missing, a refactor) is a separate issue, not a section of this one.
 
@@ -86,7 +87,7 @@ The type, written into the body file. It lives here until the team adopts it as 
 </details>
 ````
 
-No 人のゲート, スコープ外, or 依存 sections: an ordering constraint belongs in ゴール or 変更方針, a decision left to a person is marked 人が決める in 変更方針, and out-of-scope work is simply absent, or its own issue. 制約 does not permit a push: leave "push・draft 解除・apply・merge は人が行う" as it is, and do not replace it with "push は `<branch>` のみ". Naming a branch is not permission to push. The execution agent pushes only when the current user message says so. Write the issue in the language the repository's issues use.
+No 人のゲート, スコープ外, or 依存 sections: an ordering constraint belongs in ゴール or 変更方針, and between siblings also in a blocked-by relation (Create and link), a decision left to a person is marked 人が決める in 変更方針, and out-of-scope work is simply absent, or its own issue. 制約 does not permit a push: leave "push・draft 解除・apply・merge は人が行う" as it is, and do not replace it with "push は `<branch>` のみ". Naming a branch is not permission to push. The execution agent pushes only when the current user message says so. Write the issue in the language the repository's issues use.
 
 ## Before posting
 
@@ -108,7 +109,14 @@ child=$(gh issue view <url> --json id -q .id)
 gh api graphql -f query='mutation($p: ID!, $c: ID!) { addSubIssue(input: {issueId: $p, subIssueId: $c}) { subIssue { number } } }' -f p="$parent" -f c="$child"
 ```
 
-`replaceParent: true` in the same mutation moves an issue to a different parent. Then offer the execution session: a task chip, or a fresh session, whose prompt is exactly `/work-issue <number>` and nothing else. The issue is the whole brief; extra context in the prompt would hide what the issue lacks.
+When the cut put a sibling before this issue, record that as GitHub's blocked-by relation as well as in ゴール. GitHub shows the relation on the issue and on project boards, so which issues can start is visible without reading the bodies.
+
+```bash
+blocker=$(gh api repos/<owner>/<repo>/issues/<sibling> --jq .id)   # the integer id, not the node id that gh issue view --json id returns
+gh api -X POST repos/<owner>/<repo>/issues/<number>/dependencies/blocked_by -F issue_id="$blocker"
+```
+
+`replaceParent: true` in the `addSubIssue` mutation moves an issue to a different parent. Then offer the execution session: a task chip, or a fresh session, whose prompt is exactly `/work-issue <number>` and nothing else. The issue is the whole brief; extra context in the prompt would hide what the issue lacks.
 
 ## Update
 
