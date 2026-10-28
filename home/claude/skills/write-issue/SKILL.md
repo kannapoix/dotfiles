@@ -105,7 +105,7 @@ Write issues in Japanese.
 - No predicted values before measurement: 「未計測。#N で計測して決める」.
 - No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
 - 完了条件 holds only what the diff does not show. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
-- Push, taking a PR out of draft, apply, and merge are the person's. Leave 制約's line on them as it is; naming a branch is not permission to push. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and 手順 follows that order. API tests the agent runs itself, so they go under 検証(エージェントが実行する).
+- The agent block carries only what is this issue's own: preconditions, steps that name files, verification commands, and what must not change. work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of it, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and 手順 follows that order. API tests the agent runs itself, so they go under 検証(エージェントが実行する).
 - No history in 手順: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage.
 - Title: a verb and its object that someone without the background understands.
 

@@ -22,9 +22,6 @@
 
 ### 手順
 1. <concrete step, naming the files and the shape of the change>
-2. 変更量を見て(`git diff --stat origin/main`)、[Google の small CLs の指針](https://google.github.io/eng-practices/review/developer/small-cls.html)を目安に大きければ分割案を本 issue にコメントして待つ
-3. push 前に work-issue のレビューを、妥当な未対応の所見が出なくなるまで(上限 2 周)。その後 `REVIEW.md` の基準でセルフレビュー
-4. draft PR を作る(base: main、#<parent> と本 issue を参照)
 
 ### 検証(エージェントが実行する)
 ```bash
@@ -37,12 +34,6 @@
 ```
 
 ### 制約
-- push・draft 解除・apply・merge は人が行う
-- issue に無い判断は推測せず、本 issue にコメントして止まる
 - <what must not change>
-
-### 報告
-- PR の URL（未 push なら commit SHA と push コマンド）、変更の要約、人が実行する検証コマンドと期待結果、確認したこと、issue が覆っていない判断はセッションに提示する。本 issue へのコメントには書かない
-- 人が結果を伝えたら、完了条件を更新して issue を閉じる
 
 </details>
