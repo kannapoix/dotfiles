@@ -4,7 +4,7 @@ description: 'Carry out one issue as the execution session, from the issue alone
 argument-hint: <issue number or URL>
 ---
 
-The issue is the entire brief, on purpose: the startup prompt carries nothing else, so that a future automatic trigger can send the same thing. The human sections (背景, ゴール, 変更方針, 完了条件) are premises; the 🤖 block is the instruction. Where the issue is silent on a decision (a behavior, an interface, anything 変更方針 would name) you do not decide: comment on the issue, numbered, and stop, or leave that code unchanged. Each such stop measures the issue, so make it visible rather than working around it. A detail below that line, such as a name, the wording of an error, or how a helper is split, you settle yourself and list in the report, so that nothing is decided silently.
+The issue is the entire brief, on purpose: the startup prompt carries nothing else, so that a future automatic trigger can send the same thing. The human sections (背景, ゴール, 変更方針, 完了条件) are premises; the 🤖 block is the instruction. Where the issue is silent on a decision (a behavior, an interface, anything 変更方針 would name) the decision stays the person's. When one option is conservative (leave that code unchanged, skip the operation, hand the step to the person), take it without stopping and carry on: that is a ruling, and it heads the report so the person can overturn it. Only when no option is conservative and any choice would be a guess, comment on the issue, numbered, and stop. The stops for push, apply, and anything else outside the worktree (5 and 8 below) stay as they are; a ruling only ever declines such a step. Each ruling and each stop measures the issue, so make it visible rather than working around it. A detail below that line, such as a name, the wording of an error, or how a helper is split, you settle yourself and list in the report, so that nothing is decided silently.
 
 Say in one line what you loaded: the issue, its parent, and the branch you will work on.
 
@@ -30,7 +30,7 @@ Issues are often cut together and worked in order, so what lands in between can 
 ## Loop
 
 1. Implement in the order of 手順. Before the review pass, `git diff --stat origin/<base>`; measured against [Google's small CLs guide](https://google.github.io/eng-practices/review/developer/small-cls.html), a large change gets a split proposal as a comment on the issue, and you wait.
-2. Review, then fix, until a round leaves no valid finding unaddressed, at most two rounds. A 手順 line that names `/code-review --fix` is this pass. Inside this loop, do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report. A reviewer that cannot be launched is named, with the error, in the verification record, and the pass continues with the ones that ran.
+2. Review, then fix, until a round leaves no valid finding unaddressed, at most two rounds. A 手順 line that names `/code-review --fix` is this pass. Inside this loop, do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A reviewer that cannot be launched is named, with the error, in the verification record, and the pass continues with the ones that ran.
 
    When Bugbot and Security Review can be launched as subagents, this is a Cursor session. On one diff, and before anything writes:
    - `claude -p --permission-mode plan --permission-prompts none "/code-review"`. Local review, findings only. No `--fix`, no `ultra`, no `--comment`.
@@ -39,10 +39,10 @@ Issues are often cut together and worked in order, so what lands in between can 
 
    Otherwise this is a Claude Code session: `/code-review --fix`, and not `ultra`. Bugbot and Security Review are absent here.
 3. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠.
-4. Verify with the `verifier` subagent, from a clean tree. Give it the issue, the base as `origin/<base>`, and the branch, and nothing of what you did or why: it judges the diff cold, so your account would only steer it. On `accepted-with-reservations`, go on without changing the tree; the reservations reach the person through the verdict in the verification record. On `rejected`, fix what `must_fix` names that the issue covers, commit as in 3, and verify again; after a second rejection, stop and put both verdicts in the report. A `must_fix` that needs a decision the issue does not cover stays unchanged and goes into the report. A verifier that cannot be launched is named, with the error, in the verification record.
+4. Verify with the `verifier` subagent, from a clean tree. Give it the issue, the base as `origin/<base>`, and the branch, and nothing of what you did or why: it judges the diff cold, so your account would only steer it. On `accepted-with-reservations`, go on without changing the tree; the reservations reach the person through the verdict in the verification record. On `rejected`, fix what `must_fix` names that the issue covers, commit as in 3, and verify again; after a second rejection, stop and put both verdicts in the report. A `must_fix` that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A verifier that cannot be launched is named, with the error, in the verification record.
 5. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
 6. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
-7. Present the report below in the session. Never as an issue or PR comment. A changed premise is still a numbered stop in the session, as in the check above, and a missing decision a numbered comment on the issue and a stop; neither is this report.
+7. Present the report below in the session. Never as an issue or PR comment. A changed premise is still a numbered stop in the session, as in the check above, and a missing decision with no conservative option a numbered comment on the issue and a stop; neither is this report.
 8. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they report results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
 
 Write the PR description and the session report in the language of the issue.
@@ -51,13 +51,13 @@ Write the PR description and the session report in the language of the issue.
 
 After implementing, or when waiting for the person to push or apply, present all of the following in the session only:
 
+- first, the rulings: the decisions the issue did not cover that you took on the conservative side, numbered, each as what you chose, why, and what is lost if it was wrong
 - the PR URL, or when not pushed the short SHA and the push command
 - a summary of the change
 - the commands the person runs, with args, env, and expected results
 - where to read closely: the lines on a critical path or that carry a judgement, as file:line, so the person spends their reading there
 - the verification record below
 - the details you settled yourself, each as what you chose, why, and what it costs if wrong
-- the decisions the issue did not cover, numbered and unchanged
 
 ## PR description
 
@@ -105,4 +105,4 @@ The files hold the exact text and live in the scratchpad. Only the part asked fo
 
 ## Measure
 
-The number of edits the PR description took, the number of findings the CI reviewer posted, and the number of stops for decisions the issue did not cover. All three should fall as the issues get better.
+The number of edits the PR description took, the number of findings the CI reviewer posted, the number of stops for decisions the issue did not cover, and the number of rulings in the report. All four should fall as the issues get better. Rulings now take most of what used to be a stop, so read those two together; the rule rests on a single trial, so watch them before trusting a trend.
