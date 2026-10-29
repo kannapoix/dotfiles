@@ -1,5 +1,5 @@
 ---
-name: improve-harness
+name: retro
 description: Turn friction noticed in this session into a handoff brief for the dotfiles session, where it becomes a skill, a setting, an alias, or a memory, or into an issue when the fix belongs to the team's repository. Use when the user notices something worth fixing in how Claude works ("これ skill にしたい", "毎回同じ指示をしてる", "improve the harness") or wants a retrospective on the session's tooling.
 argument-hint: "[one improvement to capture; omit to review the whole session]"
 disable-model-invocation: true
