@@ -16,7 +16,11 @@ You are collecting improvements to the **harness**: the skills, settings, hooks,
   - a procedure the user explained by hand instead of pointing at a file
   - a procedure kept in the project's memory: a sign it belongs to the team
   - information that took a long time to find
+  - information Claude could not reach at all, such as logs or a service's state
   - something Claude did that it should not have
+  - a mistake a check could have caught: a hook, a lint rule, a type, a test. An existing check that is unwired or broken is the finding before a new one
+  - an instruction in CLAUDE.md, a skill, or memory that did not change what Claude did
+  - an expensive tool call: a large output read whole, the same search repeated, a slow command where a cheap one would do
 
   Rank candidates by severity and walk them one at a time: what you saw, the evidence, and whether to include it. Wait for the answer before moving on.
 
@@ -27,6 +31,8 @@ For each candidate, settle with the user where it goes:
 - **Harness** (dotfiles): how the user and Claude work together, the same in every project. It goes in the brief.
 - **Team** (the repository): specific to this project and used by people or CI as well, so a devenv script, a doc, or the repository's CLAUDE.md. It is tried on a branch first and spread by a pull request, so it does not go in the brief: hand it to write-issue on the spot, as an issue for the usual issue-to-PR flow. A procedure that had been kept in memory is deleted from memory once it is a script or a doc.
 - **Project-local**: context only this user needs. Applied here and now (the project's CLAUDE.md, its memory, or `.claude/settings.json`; ask before editing a git-tracked file) and not in the brief.
+
+Wherever it goes, a mistake with a fixed shape (a pattern, a banned call, a file in the wrong place) becomes a check, such as a hook, a lint rule, or a test, not a sentence in CLAUDE.md or a skill. Prose is for judgement calls.
 
 ## The brief
 
