@@ -11,7 +11,14 @@
       ];
       systems = ["aarch64-darwin"];
 
-      perSystem = {pkgs, ...}: {
+      perSystem = {pkgs, lib, ...}: {
+        # Every host's configuration, so a change made on one machine is known
+        # to build on the others. A host on another system needs `systems` and
+        # these lists to cover it.
+        checks =
+          lib.mapAttrs' (name: c: lib.nameValuePair "home-${lib.removePrefix "uk@" name}" c.activationPackage) self.homeConfigurations
+          // lib.mapAttrs' (name: c: lib.nameValuePair "darwin-${name}" c.system) self.darwinConfigurations;
+
         apps.default = {
           type = "app";
           program = toString (pkgs.writeShellScript "install" ''
