@@ -96,12 +96,33 @@
             }
             {
               type = "command";
+              # Permission rules match only the plain spelling, so this also
+              # catches `git -C dir push`, options before a rebuild subcommand,
+              # and running a built generation's activate script directly. Each
+              # rule adds its own reason, so a prompt names only what matched.
               command = ''
                 cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
-                if printf '%s' "$cmd" | grep -Eq 'gh +pr +(ready|merge)'; then
-                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"gh pr ready and gh pr merge are always run by the user; report that the PR is ready and stop"}}'
-                elif printf '%s' "$cmd" | grep -Eq 'git +push|home-manager +switch|darwin-rebuild +switch|run +nix-darwin'; then
-                  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"git push and config-applying commands (home-manager/darwin-rebuild switch) always require explicit user approval"}}'
+                has() { printf '%s' "$cmd" | ${pkgs.gnugrep}/bin/grep -Eq "$@"; }
+                decide() {
+                  ${pkgs.jq}/bin/jq -nc --arg d "$1" --arg r "$2" \
+                    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: $d, permissionDecisionReason: $r}}'
+                }
+
+                if has 'gh +pr +(ready|merge)'; then
+                  decide deny "gh pr ready and gh pr merge are always run by the user; report that the PR is ready and stop"
+                  exit 0
+                fi
+
+                reason=""
+                add() { if [ -n "$reason" ]; then reason="$reason; $1"; else reason=$1; fi; }
+                has '(^|[^[:alnum:]_-])git( +-[cC] +[^ ]+| +--?[[:alnum:]-]+(=[^ ]+)?)* +push([^[:alnum:]_]|$)' \
+                  && add "git push: approve only if you asked for this push"
+                has -e '(^|[^[:alnum:]_-])(home-manager|darwin-rebuild|nixos-rebuild)( +[^ ;&|]+)* +(switch|boot|test|activate|uninstall)([^[:alnum:]_-]|$)' -e 'run +nix-darwin' \
+                  && add "config apply (home-manager, darwin-rebuild, nixos-rebuild): approve only if you asked to apply it"
+                has '(result[^ /;&|]*|/nix/store/[^ /;&|]+)/activate(-user)?([^[:alnum:]_.-]|$)' \
+                  && add "activate script: running a built generation's activate applies that configuration; approve only if you asked to apply it"
+                if [ -n "$reason" ]; then
+                  decide ask "$reason"
                 fi
               '';
             }
