@@ -69,7 +69,7 @@ When every thread is settled, draft one PR comment that lists what changed since
 </details>
 ```
 
-Once the PR is approved, say the fixups are ready to squash and name the author's commands: `git fetch origin <base>`, `git rebase -i --autosquash origin/<base>`, `git push --force-with-lease`. Branches stacked on the PR follow with `git rebase --onto`.
+Once the PR is approved, say the fixups are ready to squash and name the author's commands: `git rebase -i --autosquash $(git merge-base HEAD origin/<base>)`, `git push --force-with-lease`. They keep the base, so the approved diff stays the same; catching up with the base is a separate step, only when it conflicts or the repository requires it. Branches stacked on the PR follow with `git rebase --onto`.
 
 ## Ledger
 
