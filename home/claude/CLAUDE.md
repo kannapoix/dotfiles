@@ -29,3 +29,7 @@ A comment is for whoever reads the code as it stands: a constraint, an invariant
 # Causes
 
 A fix that removes the symptom is not finished until the cause is named. Before calling a bug fixed, say in one line what caused it and what evidence says so — a log line, a `git log -S` hit, a failing test, a repro. Where there is no evidence for the step below, stop and call it a hypothesis rather than filling the gap with something plausible. Keep going down while the evidence holds, and stop at a cause that can actually be changed. When the same failure turns up a second time, the cause to name is why the first fix let it through.
+
+# Showing changes
+
+Every time you change files, show the diff itself, not only a summary of it. In the desktop app, open the diff pane for files in the session's folders; for anything else, paste `git diff` in a `diff` code block. Show it before asking the user to commit or push.
