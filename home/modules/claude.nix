@@ -68,17 +68,6 @@
     # Claude Code's own defaults and the same PATH as before.
     env.CLAUDE_CODE_SHELL = "${pkgs.bashInteractive}/bin/bash";
     hooks = {
-      Notification = [
-        {
-          matcher = "";
-          hooks = [
-            {
-              type = "command";
-              command = "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'";
-            }
-          ];
-        }
-      ];
       PreToolUse = [
         {
           matcher = "Bash";
