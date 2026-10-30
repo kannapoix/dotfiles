@@ -18,7 +18,6 @@
     ../modules/ssh.nix
     ../modules/ghostty.nix
     ../modules/claude.nix
-    ../modules/cursor.nix
   ];
 
   modules.firefox.syncDeviceName = "work-mac";

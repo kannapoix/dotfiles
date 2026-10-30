@@ -26,7 +26,6 @@
     ../modules/ghostty.nix
     ../modules/firefox.nix
     ../modules/claude.nix
-    ../modules/cursor.nix
   ];
 
   modules.firefox.syncDeviceName = "mbp-2021";
