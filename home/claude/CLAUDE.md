@@ -22,6 +22,10 @@ One commit per change. What may happen to the branch depends on its stage:
 
 An instruction to keep a pull request to one commit, from an issue for example, covers the draft stage only.
 
+# Steps and questions for the user
+
+Steps left for the user to run, such as landing, pushing, applying a configuration, a check on another machine, or a cleanup, go out as the exact commands in the order to run them, one fenced block each. Name the directory or machine when it is not the current one. Never stand in for a command with "the usual steps" or an alias named without its invocation: the user runs them from the reply, not from memory.
+
 # Comments and commit messages
 
 A comment is for whoever reads the code as it stands: a constraint, an invariant, a non-obvious trade-off, or why a value is what it is. A commit message is for whoever reads the change: why it was needed and why this approach. If a sentence still matters once the commit is out of view, it is a comment; if it only explains the patch, it is the message. Skip comments that restate the code.
