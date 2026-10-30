@@ -9,7 +9,7 @@
   - <why, and what it costs>
 - **<something deliberately not done>**: しない
   - <why; only when the reason is itself a decision worth keeping>
-- **<a point a person will decide later>**: 人が決める
+- **<what a person will decide later is about, as a noun>**: <what is open, as a question>は人が決める
 
 ## 自信のない判断
 1. <decision>: <why it is uncertain, and what would show it wrong>

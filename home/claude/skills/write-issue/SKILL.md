@@ -102,6 +102,11 @@ Write issues in Japanese.
 - The human sections hold decisions only and read without the code: behavior, contracts, and their reasons. Job names, lists of paths, and conditional expressions stay out; the execution session finds them in the code. The issue is what a reviewer reads from the PR, and later the record of why, so it has to outlast the code.
 - A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
 - Short nested bullets. Start as a small skeleton; add a table or a diagram only when asked.
+- A bullet with a bold label and a colon has a noun for the label, naming what the line settles (「**通知**」「**既存の設定**」), and a whole sentence after the colon carrying the decision and its reason. A label that holds the decision leaves only 「〜ため」 or a fragment after it, and the line no longer reads on its own.
+- A point left to a person is a question about what is open (「**失敗の通知**: どう通知するかは人が決める」). A topic alone (「**移行が終わるまで**: 人が決める」) reads two ways.
+- A sentence names who acts and on what whenever the sentence before does not settle it (「ワーカーに再試行させる」「設定ファイルが変わるたびに」), and repeats the noun instead of これ, それ, or その〜 when two things could be meant.
+- Every bullet ends in its predicate, 確かめ方 and 完了条件 included: 「中身が元のファイルと同じになる」, not 「中身が元のファイルと同じ」.
+- The established term, not a one-character calque: バージョン, not 版; 監視, not 見張り; 先頭, not 頭.
 - No predicted values before measurement: 「未計測。#N で計測して決める」.
 - No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
 - 完了条件 holds only what the diff does not show; what the diff shows is 確かめ方. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
