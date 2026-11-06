@@ -6,7 +6,7 @@ This repository is public, and it is worked on from several machines, each signe
 
 - Sessions run in worktrees the desktop app creates, on `claude/*` branches. Commit there when the user asks, one commit per change; amending an unpushed commit is fine when that is the cleaner fix.
 - The user lands a branch with `git land` from the worktree, which fast-forwards main, then pushes it and applies the configuration on each machine.
-- Verify a change with `nix flake check`, which builds every host's configuration. To inspect the generated files, build this machine's home configuration with `nix build ".#homeConfigurations.\"uk@$(hostname -s)\".activationPackage"`, read `result/home-files/`, then remove `result`.
+- Verify a change with `nix flake check`, which builds every host's configuration. It can wait many minutes behind another build on the same nix daemon, so run it in the background with `-L` and its output going straight to the task's file, never through `tail`. To inspect the generated files, build this machine's home configuration with `nix build ".#homeConfigurations.\"uk@$(hostname -s)\".activationPackage"`, read `result/home-files/`, then remove `result`.
 
 ## Writing skills and CLAUDE.md files
 
