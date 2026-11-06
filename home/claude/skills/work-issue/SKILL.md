@@ -68,6 +68,7 @@ After implementing, or when waiting for the person to push or apply, present all
 <only when a choice between candidates needs justifying; a table lists only the candidates that affect the decision>
 ````
 
+- 実装方針 is for a change that makes choices a reviewer needs explained. A change with none, such as one that only adds data, has no 実装方針: it carries only what the reviewer or the person who runs it needs, such as its deploy steps.
 - A term a reader would look up is linked once, at its first occurrence, to the official documentation. Open the page and confirm the term is on it before linking. Prefer the documentation to a link into source, and for a locked dependency, the page for the locked version where one exists.
 - A value not yet measured is written as 「未計測。#N で計測して決める」, with no predicted number or table.
 - A decision made with the user during the session goes into the description when it is made, not at the end.

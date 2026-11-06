@@ -31,9 +31,13 @@ Steps left for the user to run, such as landing, pushing, applying a configurati
 
 Ask a question once. When the user answers something else and does not take it up, do not ask it again, in the reply or in a closing prompt; say once that it is still open, then leave it until they come back to it.
 
-# Comments and commit messages
+# Comments, commit messages, and PR descriptions
 
 A comment is for whoever reads the code as it stands: a constraint, an invariant, a non-obvious trade-off, or why a value is what it is. A commit message is for whoever reads the change: why it was needed and why this approach. If a sentence still matters once the commit is out of view, it is a comment; if it only explains the patch, it is the message. Skip comments that restate the code.
+
+An overview, such as a file's header comment, a PR description's summary, or a section heading, says what each part is for. How it works and the exact values go next to the code that does it, or a level below the overview. A term the reader has not met yet, such as an argument or an internal name, is explained before or where it is first used.
+
+A comment, commit message, or PR description covers only what its change does. A decision about later or separate work, such as a task still to come and what it will need, goes in the issue that owns that work.
 
 # Causes
 
