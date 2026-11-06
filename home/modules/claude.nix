@@ -115,6 +115,22 @@
                 fi
               '';
             }
+            {
+              type = "command";
+              # The shell side of the Read deny on the AWS credential caches,
+              # plus an SSO token handed to aws on the command line (only the
+              # aws sso subcommands take --access-token). A string match, so a
+              # path built up in pieces still gets through.
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                if printf '%s' "$cmd" | ${pkgs.gnugrep}/bin/grep -Eq \
+                     -e '\.aws/(sso|cli)/cache' \
+                     -e '(^|[^[:alnum:]_-])aws [^;&|]*--access-token'; then
+                  echo 'Do not read the AWS credential caches (~/.aws/sso/cache, ~/.aws/cli/cache) or pass an SSO access token to aws. To find accounts or roles, or when an SSO login is needed, ask the user to run aws configure sso or aws sso login.' >&2
+                  exit 2
+                fi
+              '';
+            }
           ];
         }
       ];
@@ -127,6 +143,10 @@
       deny = [
         "Bash(gh pr ready:*)"
         "Bash(gh pr merge:*)"
+        # SSO access tokens and the role credentials made from them. Bash reads
+        # of the same paths go through the PreToolUse hook instead.
+        "Read(~/.aws/sso/cache/**)"
+        "Read(~/.aws/cli/cache/**)"
       ];
       ask = [
         "Bash(git push:*)"
