@@ -41,6 +41,7 @@ Show the cut as a numbered list. For each piece, first in plain words: what it d
 
 - Work a person does after merge is a line in the parent's 完了条件, not a piece.
 - Work already asked of a person is not a piece; when the parent's completion waits on it, it is a line in 完了条件.
+- A sibling must finish first only when this piece needs it merged. Pieces that only have to be checked together, such as a script and the data or infrastructure it acts on, are checked on one piece's branch before either merges, so neither blocks the other; the order comes from checking before merging, not from which code is written first. Both pieces' 完了条件 say what is put in place first, on which piece's branch the check runs, and that both merge once it passes.
 - Work no PR can close splits into a parent that holds it and a child the PR closes.
 - Nothing sits between the parent and a sub-issue. A problem found on the way is its own issue, not a piece.
 
@@ -110,7 +111,7 @@ Write issues in Japanese.
 - No predicted values before measurement: 「未計測。#N で計測して決める」.
 - No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
 - 完了条件 holds only what the diff does not show; what the diff shows is 確かめ方. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
-- work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of the issue, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and the person's checks are 完了条件 lines in that order. An API test the agent can run itself is a 確かめ方 condition.
+- work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of the issue, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and the person's checks are 完了条件 lines in that order. A check goes after merge only when it needs the merged state, such as making a job a required check, which waits until the job runs on the default branch; that line says what it waits for. An API test the agent can run itself is a 確かめ方 condition.
 - No history in the issue: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage.
 - Title: a verb and its object that someone without the background understands.
 

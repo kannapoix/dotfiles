@@ -73,6 +73,12 @@ After implementing, or when waiting for the person to push or apply, present all
 - A decision made with the user during the session goes into the description when it is made, not at the end.
 - No 確認したこと section: reviewers do not need it. It goes in the verification record below.
 
+## Steps the person runs
+
+Steps such as an apply or a check on a live environment go in the PR description in the order they run, and the report and any change to the issue keep that order. Each runs before merge unless it needs the merged state, such as making a job a required check, which waits until the job runs on the default branch; ask that of a step before placing it after merge. A script on another branch runs without merging it: take it out with `git show origin/<branch>:<path>`, or check that branch out in a worktree.
+
+When PRs are checked together, which one waits follows from checking before merging, not from the order the code was written: put in place what the check needs (an apply, data), run the check on one branch with the other PR's files brought over, and merge both once it passes. Each PR's steps name the other PR and the branch each step runs on.
+
 ## Verification record
 
 The description is for reviewers; what you checked is for the person who ran you. It is part of the session report above, never a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
