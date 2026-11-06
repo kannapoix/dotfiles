@@ -120,6 +120,10 @@
       ];
     };
     permissions = {
+      # Bash is not covered, and CLIs before 2.1.314 ignore the key. From
+      # another project's session, `/add-dir ~/dotfiles` lets the file tools
+      # edit this repo again.
+      blockWritesOutsideWorkingDirectories = true;
       deny = [
         "Bash(gh pr ready:*)"
         "Bash(gh pr merge:*)"
