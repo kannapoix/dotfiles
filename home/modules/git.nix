@@ -45,6 +45,11 @@
       core = {
         editor = "vim";
         pager = "delta";
+        # Apple's ssh rather than the nixpkgs one ahead of it on PATH: only
+        # Apple's reads key passphrases from the Keychain (UseKeychain), so a
+        # key works without a prompt even when the agent is empty. Nix fetches
+        # git+ssh flake inputs through git as well.
+        sshCommand = "/usr/bin/ssh";
       };
       interactive = {
         diffFilter = "delta --color-only --features=interactive";
