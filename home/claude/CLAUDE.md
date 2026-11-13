@@ -35,13 +35,15 @@ Ask a question once. When the user answers something else and does not take it u
 
 A comment is for whoever reads the code as it stands: a constraint, an invariant, a non-obvious trade-off, or why a value is what it is. A commit message is for whoever reads the change: why it was needed and why this approach. If a sentence still matters once the commit is out of view, it is a comment; if it only explains the patch, it is the message. Skip comments that restate the code.
 
-An overview, such as a file's header comment, a PR description's summary, or a section heading, says what each part is for. How it works and the exact values go next to the code that does it, or a level below the overview. A term the reader has not met yet, such as an argument or an internal name, is explained before or where it is first used.
+An overview, such as a file's header comment, a PR description's summary, or a section heading, says what each part is for. How it works and the exact values go next to the code that does it, or a level below the overview. A term the reader has not met yet, such as an argument or an internal name, is explained before or where it is first used. When two things share a name, such as a field and a method both called `Fetch`, name each with its owner at first mention (`Client.Fetch`, the service's `Fetch`) and keep the qualifier after, in a reply as much as in a comment.
 
 A comment, commit message, or PR description covers only what its change does. A decision about later or separate work, such as a task still to come and what it will need, goes in the issue that owns that work.
 
 # Causes
 
 A fix that removes the symptom is not finished until the cause is named. Before calling a bug fixed, say in one line what caused it and what evidence says so — a log line, a `git log -S` hit, a failing test, a repro. Where there is no evidence for the step below, stop and call it a hypothesis rather than filling the gap with something plausible. Keep going down while the evidence holds, and stop at a cause that can actually be changed. When the same failure turns up a second time, the cause to name is why the first fix let it through.
+
+The same holds for any claim that leaves the session, in a reply, a generated page, or memory. What code does or what a value means rests on the code and the values at its real call sites, not on the shape of a signature; what a spec or issue says, on its text; a state such as which points were commented on, merged, or approved, on the PR or issue read just now, not on a remark about it. What you have not read, call unverified.
 
 # Showing changes
 
