@@ -13,6 +13,7 @@ Read the arguments. A target alone means a full review (below). A target plus a 
 - When the PR is to be worked on in this session's worktree, check it out first with `/load-pr <PR>`; the surrounding code you read is then the code under review, not the session's branch. When its report says the default branch has commits on the PR's files that the stacked base lacks, what lands will differ from what you read: read those files on the default branch too, and say so in the first message's first line.
 - Read the existing discussion first (review comments, comment threads, linked issues). Do not repeat what is already raised or resolved. A mismatch between what was agreed there and what the target now says is itself a finding.
 - Never judge the target alone. Read what it calls, what calls it, its siblings, the docs and specs it references, the real resources it touches, the current implementation a design describes. When a claim rests on an external spec or a pinned version, fetch the primary source and check it. Cite what you used.
+- When a finding's cause or fix lies in a pinned dependency (a lock file, a flake input, a submodule, vendored code), look past the pin before rating it: the dependency's commits from the pin to its head, and its open pull requests, above all those by this PR's author. A fix there turns the finding into a question of when to take it in.
 - If a review bot already runs on the project, nits and typos are its job. Go past it.
 
 ## First message: a map, not a dump
@@ -20,7 +21,7 @@ Read the arguments. A target alone means a full review (below). A target plus a 
 1. One line on what you compared against.
 2. A narrative map of the target, 3–5 lines in the order things happen, not file order: what triggers it, what runs where, what it creates, what depends on it.
 3. Verdict: acknowledge the skeleton in one sentence, then bold the 2–3 things to settle before merge or implementation.
-4. The ledger: numbered one-line headlines in severity order (forces structural change later > breaks in operation > quality), each tagged must-fix / worth raising / note. No mechanisms yet. Fold fine points into one item or drop them.
+4. The ledger: numbered one-line headlines in severity order (forces structural change later > breaks in operation > quality), each tagged must-fix / worth raising / note. No mechanisms yet. Fold fine points into one item or drop them. A tag, and a point in bold in 3, rests on what you checked: for worth raising and above, what the fix it asks for, said or implied, would do to the current code; for what a value means, the values at its real call sites, since the shape of a signature is not evidence. What you could not check carries "unverified" next to its tag and stays out of bold.
 5. Good points, brief, only if sincere.
 
 Post nothing. Close by offering to start with 1, or to lay everything out in depth if the reviewer prefers.
