@@ -131,6 +131,22 @@
                 fi
               '';
             }
+            {
+              type = "command";
+              # A glob in the first component under /nix/store, or find, ls,
+              # grep and the like given the store root, walks every path nix
+              # has built and does not return in time. A concrete
+              # /nix/store/<hash>-<name>/... path stays allowed.
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                if printf '%s' "$cmd" | ${pkgs.gnugrep}/bin/grep -Eq \
+                     -e '(^|[[:space:]=])/nix/store/[^/[:space:]]*[*?]' \
+                     -e '(^|[;&|(]|[[:space:]])(find|fd|ls|du|tree|rg|grep)[[:space:]]([^;&|]*[[:space:]])?/nix/store/?([[:space:];&|)]|$)'; then
+                  echo 'Do not glob or search across /nix/store; it does not return in time. Ask nix for the path instead: nix eval --raw nixpkgs#<pkg>.outPath, nix build --no-link --print-out-paths <installable>, or nix path-info <installable>. A concrete /nix/store/<hash>-<name>/... path is fine.' >&2
+                  exit 2
+                fi
+              '';
+            }
           ];
         }
       ];
