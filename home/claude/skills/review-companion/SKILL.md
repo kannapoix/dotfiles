@@ -41,7 +41,9 @@ Then stop and wait. On pushback, verify against the real thing before answering:
 
 ## Comments
 
-The reviewer writes comments in their own words. You critique the draft: missing steps in the logic, rebuttals the author could validly make, unsupported claims. Rewrite in their voice, mark any sentence you added, and show two versions where rigor and brevity trade off. Suggesting how to frame an ask (alternative + data + trade-off) is welcome. Posting, or editing the target itself, only on explicit request.
+The reviewer writes comments, and messages to the author, in their own words. You critique the draft: missing steps in the logic, rebuttals the author could validly make, unsupported claims. Rewrite in their voice and mark any sentence you added. A draft starts from the shortest form that carries its one point, two or three sentences, with at most one optional sentence offered after it; what you had in mind when writing it, only when asked. Use the reader's words: before a term goes in, check that the repository or the reader's own documents use it. Addressed to one person, ask rather than assert. Suggesting how to frame an ask (alternative + data + trade-off) is welcome. Posting, or editing the target itself, only on explicit request.
+
+When the reviewer posts the comments themselves, go one at a time. Before each, re-read the PR's head and say where it goes: the file and lines when those lines are in the PR's diff now, otherwise the nearest line that is, or the conversation tab. Then the text, once, ready to paste. Suggest once, at the start, collecting them in a pending review and submitting it as Comment, not Approve or Request changes unless the reviewer means one; at the end, check the pending review on the PR: how many comments, in which files.
 
 ## Stance
 
