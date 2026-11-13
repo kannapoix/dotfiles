@@ -38,7 +38,7 @@ Issues are often cut together and worked in order, so what lands in between can 
 5. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
 6. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
 7. Present the report below in the session. Never as an issue or PR comment. A changed premise, a missing decision with no conservative option, and a split proposal are each a numbered stop in the session, as in the check above; none of them is this report.
-8. Stop. `gh pr ready`, merge, apply, and release belong to the person. When they report results, tick the completion conditions and close the issue. Review comments on the PR are `/address-review`'s job.
+8. Stop. `gh pr ready`, merge, apply, and release belong to the person. From here `/close-out <PR>` follows the change to its closed issue, ticking the completion conditions and closing the issue on the person's yes. Review comments on the PR are `/address-review`'s job.
 
 Write the PR description and the session report in the language of the issue.
 
