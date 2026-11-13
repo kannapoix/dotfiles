@@ -43,6 +43,37 @@
       git rebase --fork-point "$upstream"
     fi
   '';
+
+  # Fold fixup!, squash!, and amend! commits into their targets without moving
+  # the base: the base is the merge base with origin/<target> (the default
+  # branch, else the argument), which for a stack is its bottom, and
+  # --update-refs carries the branches inside the stack along. Catching up
+  # with a newer base is git rb's job.
+  gitSquashFixups = pkgs.writeShellScript "git-squash-fixups" ''
+    target=''${1:-$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | cut -d/ -f2-)}
+    if [ -z "$target" ]; then
+      echo "usage: git squash-fixups [branch] (could not detect the default branch)" >&2
+      exit 1
+    fi
+    git fetch origin "$target" || exit 1
+    base=$(git merge-base HEAD "origin/$target") || exit 1
+    short=$(git rev-parse --short "$base")
+    if [ -n "$(git rev-list --merges "$base..HEAD")" ]; then
+      echo "merge commits since $short; not squashing" >&2
+      exit 1
+    fi
+    if ! git log --format=%s "$base..HEAD" | grep -Eq '^(fixup|squash|amend)! '; then
+      echo "no fixup!, squash!, or amend! commits since $short"
+      exit 0
+    fi
+    echo "squashing fixups onto $short (merge-base with origin/$target)" >&2
+    tree=$(git rev-parse 'HEAD^{tree}')
+    git rebase --autosquash --update-refs "$base" || exit 1
+    if [ "$(git rev-parse 'HEAD^{tree}')" != "$tree" ]; then
+      echo "the tree changed; compare with: git diff ORIG_HEAD HEAD" >&2
+      exit 1
+    fi
+  '';
 in {
   programs.git = {
     enable = true;
@@ -84,6 +115,7 @@ in {
         wt-pr = "!f () { num=$1; [ -z \"$num\" ] && num=$(gh pr list | fzf | cut -f1); [ -z \"$num\" ] && exit 1; branch=$(gh pr view \"$num\" --json headRefName -q .headRefName); dir=\"../$(basename $(git rev-parse --show-toplevel))-pr-$num-$(echo $branch | tr / -)\"; git worktree add --detach \"$dir\" && (cd \"$dir\" && gh pr checkout \"$num\"); }; f";
         sync = "!f () { git pull --ff-only 2>/dev/null && return; echo \"fast-forward failed (remote may have been rebased/force-pushed)\" >&2; printf \"force-sync to remote? [y/N] \" >&2; read ans; case \"$ans\" in y|Y|yes|YES) ;; *) echo \"aborted\" >&2; exit 1;; esac; if num=$(gh pr view --json number -q .number 2>/dev/null); then gh pr checkout \"$num\" --force; else git fetch && git reset --hard '@{upstream}'; fi; }; f";
         rb = "!${gitRb}";
+        squash-fixups = "!${gitSquashFixups}";
         land = "!f () { unset GIT_DIR GIT_WORK_TREE GIT_COMMON_DIR; b=$(git branch --show-current); if [ -z \"$b\" ]; then echo \"detached HEAD; nothing to land\" >&2; exit 1; fi; main_wt=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); target=$(git -C \"$main_wt\" symbolic-ref --short -q HEAD); if [ \"$target\" != main ]; then echo \"main checkout $main_wt is on '$target', expected main\" >&2; exit 1; fi; if [ \"$b\" = main ]; then echo \"already on main; nothing to land\" >&2; exit 1; fi; if ! git merge-base --is-ancestor main \"$b\"; then echo \"main has $(git rev-list --count \"$b..main\") commit(s) not in $b; rebase first:\" >&2; echo \"  git rebase main && git land\" >&2; exit 1; fi; git -C \"$main_wt\" merge --ff-only \"$b\" || exit 1; echo \"landed $b on main; next: git push origin main\"; }; f";
       };
 

@@ -47,10 +47,9 @@ Commit by kind: `git commit --fixup=<sha>`; for amend!, `git commit -m "amend! <
 
 - **accept / modify, under review**: implement, `git add` the files by name, commit by kind, and stop there: no rebase or squash beyond a fold. `git fetch origin <head>` and check `git merge-base --is-ancestor origin/<head> HEAD`; if the remote moved, show the user before anything else. A base that moved stays as it is; if it conflicts, or the fix needs what landed there, say so and name `git rb` and `git push --force-with-lease` for the author.
 - **accept / modify, draft**: note the tip and the branches stacked on it (`git branch --contains HEAD`, minus the current branch), implement, `git add` the files by name, and commit. Then, in this order:
-  1. `git fetch` the remote, take the base freshly: `git merge-base HEAD origin/<default>`. Never reuse a base from earlier in the session; another session may have rebased the branch since.
-  2. `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <base>`.
-  3. `git diff <old tip> <new tip>` must show the fix and nothing else; `git log --oneline <base>..HEAD` must show the same commits as before. If not, stop and show the user before touching anything else.
-  4. Each stacked branch follows with `git rebase --onto <new tip> <old tip> <branch>`, then the same diff check on that branch. Return to the PR branch.
+  1. `git squash-fixups`. It fetches and takes the base freshly, as the merge base with `origin/<default>`, and prints it; never reuse a base from earlier in the session, since another session may have rebased the branch since.
+  2. `git diff <old tip> <new tip>` must show the fix and nothing else; `git log --oneline <base>..HEAD` must show the same commits as before. If not, stop and show the user before touching anything else.
+  3. Each stacked branch follows with `git rebase --onto <new tip> <old tip> <branch>`, then the same diff check on that branch. Return to the PR branch.
 - **reject**: no commit. The reply carries the evidence.
 - A fix that changes a decision the PR description states also changes that sentence, with `gh-body-edit pr <N> --replace old.md new.md`, and nothing else in the description.
 - Either way, draft the reply in the author's voice and in the language the author uses on that PR: the part of the comment that is right comes first, then what was done or why not, in as few sentences as the point allows. Under review, name the fix's short SHA so the reviewer can open just that change (after a fold, the fixup's new SHA). Mark anything you added that the author did not say.
@@ -69,7 +68,7 @@ When every thread is settled, draft one PR comment that lists what changed since
 </details>
 ```
 
-Once the PR is approved, say the fixups are ready to squash and name the author's commands: `git rebase -i --autosquash $(git merge-base HEAD origin/<base>)`, `git push --force-with-lease`. They keep the base, so the approved diff stays the same; catching up with the base is a separate step, only when it conflicts or the repository requires it. Branches stacked on the PR follow with `git rebase --onto`.
+Once the PR is approved, say the fixups are ready to squash and name the author's commands: `git squash-fixups <base>`, `git push --force-with-lease`. They keep the base, so the approved diff stays the same; catching up with the base is a separate step, only when it conflicts or the repository requires it. Once that push is in, each branch stacked on the PR follows with `git rb`, which leaves out the PR's old commits.
 
 ## Ledger
 
