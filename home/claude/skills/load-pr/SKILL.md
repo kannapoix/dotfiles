@@ -9,6 +9,6 @@ Bring the PR's branch into this worktree, confirm what landed, then stop or hand
 1. `git status --short` must be empty; otherwise stop and say what is in the way.
 2. `gh pr checkout <PR>`.
 3. Confirm `git rev-parse HEAD` equals `gh pr view <PR> --json headRefOid -q .headRefOid`. If not, say so and stop; do not reset anything.
-4. Report three lines: title and author, `base <- head`, the verified HEAD. If the base is not the default branch, add that branch-wide diffs include the stack and the PR-only diff is `gh pr diff <PR>`.
+4. Report three lines: title and author, `base <- head`, the verified HEAD. If the base is not the default branch, add that branch-wide diffs include the stack and the PR-only diff is `gh pr diff <PR>`. Then check whether the stacked base lags what already landed: `git log --oneline origin/<base>..origin/<default> -- $(gh pr diff <PR> --name-only)` lists the default branch's commits on the PR's files that the base lacks. If it lists any, report them with the files, and whether the default branch dismisses approvals on push (`gh api repos/<owner>/<repo>/rules/branches/<default>`, the `pull_request` rule's `dismiss_stale_reviews_on_push`): when it does not, an approval given now still stands after the conflicts are resolved on retargeting.
 
 The branch belongs to the PR author: do not commit on it unless the user asks, and never push. New commits on the PR: run `gh pr checkout` again; it fast-forwards and fails if the PR was force-pushed, which the user decides about. `git switch -` returns to the branch the session started on.
