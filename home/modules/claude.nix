@@ -193,7 +193,11 @@ in {
 
   config = {
     home.sessionPath = ["$HOME/.local/bin"];
-    home.packages = [ghBodyEdit scopeDiagramPng claudeAiSkillsTool];
+    # GNU coreutils and a current python3, ahead of macOS's /usr/bin in the
+    # Bash tool's PATH (and the login shell's): Claude writes GNU forms such as
+    # `head -c -1` and `timeout`, and /usr/bin/python3 (3.9) rejects a long
+    # line holding multibyte text unless the script declares its encoding.
+    home.packages = [ghBodyEdit scopeDiagramPng claudeAiSkillsTool pkgs.coreutils pkgs.python3];
     home.file.".local/share/claude-ai-skills".source = claudeAiSkillBundles;
 
     # claude.ai has no upload API, so the upload is left to the user: the
