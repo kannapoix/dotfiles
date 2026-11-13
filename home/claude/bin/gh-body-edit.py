@@ -3,6 +3,7 @@
     gh-body-edit (issue|pr|comment) ID --replace OLD NEW
     gh-body-edit (issue|pr|comment) ID --append-after ANCHOR NEW
     gh-body-edit (issue|pr|comment) ID --delete OLD
+    gh-body-edit pr ID --relink-commits
 
 ID is a number or URL. For a comment, it is the comment's id, or its URL
 (...#issuecomment-<id>); this covers comments on issues and the
@@ -17,6 +18,12 @@ read as LF and converted, and their final newline is not part of the
 text. After writing, the body is fetched once more and compared with
 what was written. Output is one line: OK, ABORT: <reason>, or FAIL.
 
+--relink-commits points the body's links to the pull request's own
+commits (.../pull/<N>/commits/<sha>) at the commits the pull request has
+now, after a force push. Each old commit is matched to a current one by
+subject, else by patch id; the short SHA shown in the link text changes
+with the URL. The pairs are printed to stderr first, and if any old
+commit has no match the run aborts and writes nothing.
 """
 
 import argparse
@@ -27,12 +34,21 @@ import subprocess
 import sys
 
 
-def gh(args, stdin=None):
-    proc = subprocess.run(["gh", *args], input=stdin, capture_output=True)
+def run(cmd, stdin=None):
+    proc = subprocess.run(cmd, input=stdin, capture_output=True)
     if proc.returncode != 0:
         sys.stderr.write(proc.stderr.decode("utf-8", "replace"))
         sys.exit(proc.returncode)
     return proc.stdout
+
+
+def gh(args, stdin=None):
+    return run(["gh", *args], stdin)
+
+
+def try_run(cmd, stdin=None):
+    proc = subprocess.run(cmd, input=stdin, capture_output=True)
+    return proc.stdout if proc.returncode == 0 else None
 
 
 def comment_path(ident, repo):
@@ -109,6 +125,81 @@ def edit(body, mode, anchor, new, eol):
     return body[:line_end] + eol + new + body[line_end:]
 
 
+def commit_subject(owner_repo, sha):
+    # The old commits are usually still in the local repository after a
+    # force push; GitHub keeps serving them by SHA as well.
+    out = try_run(["git", "log", "-1", "--format=%s", sha])
+    if out is not None:
+        return out.decode("utf-8").strip()
+    out = gh(["api", f"repos/{owner_repo}/commits/{sha}",
+              "--jq", ".commit.message"])
+    return out.decode("utf-8").split("\n", 1)[0].strip()
+
+
+def patch_id(owner_repo, sha):
+    diff = try_run(["git", "show", "--format=", sha])
+    if diff is None:
+        diff = gh(["api", "-H", "Accept: application/vnd.github.diff",
+                   f"repos/{owner_repo}/commits/{sha}"])
+    out = run(["git", "patch-id", "--stable"], stdin=diff).decode()
+    return out.split()[0] if out.strip() else None
+
+
+def relink(ident, repo):
+    flags = ["--repo", repo] if repo else []
+    pr = json.loads(gh(["pr", "view", ident, *flags,
+                        "--json", "body,url,number,commits"]))
+    owner_repo = re.search(r"github\.com/([^/]+/[^/]+)/pull/",
+                           pr["url"])[1]
+    link = re.compile(
+        r"(\[[^\]\n]*\]\()?"
+        r"(https://github\.com/" + re.escape(owner_repo) +
+        r"/pull/" + str(pr["number"]) + r"/commits/)([0-9a-f]{40})",
+        re.IGNORECASE)
+    body = pr["body"]
+    olds = list(dict.fromkeys(m[3].lower() for m in link.finditer(body)))
+    current = {c["oid"]: c["messageHeadline"] for c in pr["commits"]}
+    stale = [sha for sha in olds if sha not in current]
+    if not stale:
+        print("OK: no change")
+        sys.exit(0)
+
+    pairs, unmatched, taken = {}, [], set()
+    pids = {}
+    for sha in stale:
+        subject = commit_subject(owner_repo, sha)
+        same = [oid for oid, s in current.items()
+                if s == subject and oid not in taken]
+        if len(same) != 1:
+            if not pids:
+                pids = {oid: patch_id(owner_repo, oid) for oid in current}
+            pid = patch_id(owner_repo, sha)
+            same = [oid for oid, p in pids.items()
+                    if pid and p == pid and oid not in taken]
+        if len(same) == 1:
+            pairs[sha] = same[0]
+            taken.add(same[0])
+            sys.stderr.write(f"{sha[:7]} -> {same[0][:7]}  {subject}\n")
+        else:
+            unmatched.append(f"{sha[:7]} ({subject})")
+    if unmatched:
+        abort("no current commit matches " + ", ".join(unmatched))
+
+    def swap(m):
+        old = m[3].lower()
+        new = pairs.get(old)
+        if new is None:
+            return m[0]
+        text = m[1] or ""
+        # A short SHA in the link text is a prefix of the old one.
+        text = re.sub(
+            r"\b[0-9a-f]{7,40}\b",
+            lambda s: new[:len(s[0])] if old.startswith(s[0]) else s[0],
+            text)
+        return text + m[2] + new
+    return body, link.sub(swap, body)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="gh-body-edit",
@@ -121,20 +212,25 @@ def main():
     group.add_argument("--replace", nargs=2, metavar=("OLD", "NEW"))
     group.add_argument("--append-after", nargs=2, metavar=("ANCHOR", "NEW"))
     group.add_argument("--delete", metavar="OLD")
+    group.add_argument("--relink-commits", action="store_true")
     args = parser.parse_args()
 
-    if args.replace:
-        mode, files = "replace", args.replace
-    elif args.append_after:
-        mode, files = "append-after", args.append_after
+    if args.relink_commits:
+        if args.kind != "pr":
+            abort("--relink-commits works on a pull request only")
+        base, body = relink(args.ident, args.repo)
     else:
-        mode, files = "delete", [args.delete]
-
-    base = fetch(args.kind, args.ident, args.repo)
-    eol = "\r\n" if "\r\n" in base else "\n"
-    anchor = read_text(files[0], eol)
-    new = read_text(files[1], eol) if len(files) > 1 else ""
-    body = edit(base, mode, anchor, new, eol)
+        if args.replace:
+            mode, files = "replace", args.replace
+        elif args.append_after:
+            mode, files = "append-after", args.append_after
+        else:
+            mode, files = "delete", [args.delete]
+        base = fetch(args.kind, args.ident, args.repo)
+        eol = "\r\n" if "\r\n" in base else "\n"
+        anchor = read_text(files[0], eol)
+        new = read_text(files[1], eol) if len(files) > 1 else ""
+        body = edit(base, mode, anchor, new, eol)
     if body == base:
         print("OK: no change")
         return
