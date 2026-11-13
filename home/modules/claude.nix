@@ -147,6 +147,24 @@
                 fi
               '';
             }
+            {
+              type = "command";
+              # git replay updates refs itself unless --ref-action=print is
+              # given (the default is update as of git 2.54), including
+              # branches another worktree has checked out. Each git replay in
+              # the command is checked on its own.
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                runs=$(printf '%s' "$cmd" | ${pkgs.gnugrep}/bin/grep -Eo \
+                  '(^|[^[:alnum:]_-])git( +-[cC] +[^ ]+| +--?[[:alnum:]-]+(=[^ ]+)?)* +replay([[:space:]][^;&|]*)?')
+                if [ -n "$runs" ] && printf '%s\n' "$runs" \
+                     | ${pkgs.gnugrep}/bin/grep -Ev -e '--ref-action(=| +)print' -e ' (-h|--help)( |$)' \
+                     | ${pkgs.gnugrep}/bin/grep -q .; then
+                  echo 'Run git replay only with --ref-action=print: without it, git replay moves the refs itself. Read the printed update-ref lines, and move a branch with a command the user can follow, such as git rebase.' >&2
+                  exit 2
+                fi
+              '';
+            }
           ];
         }
       ];
