@@ -11,11 +11,11 @@ The reader wants to understand the change well enough to review it, build on it,
 
 ## Before writing
 
-Read the change, then the code around it: callers, tests, data shapes, and the configuration it relies on. Work out how the system behaved before, how it behaves now, and why the change was needed. Start the page only once you can state the change's core idea in two sentences.
+Read the change, then the code around it: callers, tests, data shapes, and the configuration it relies on. Work out how the system behaved before, how it behaves now, and why the change was needed. Start the page only once you can state the change's core idea in two sentences. Every statement the page makes about what the code, a neighbouring component, or the design does rests on a file and line, or a passage of the linked issue or design notes, that you read for this page; read those documents, not only the code.
 
 ## The page
 
-One continuous page: a title, a summary of two or three sentences, a table of contents, and three sections in this order. It reads well on a phone.
+One continuous page: a title, a summary of two or three sentences, a table of contents, and three sections in this order.
 
 1. **Background.** First a primer on the part of the system involved, for a reader who has never seen it and marked as skippable; then the narrower context the change touches.
 2. **Intuition.** The core idea, before any code. Carry it with one small worked example on made-up data, with before and after side by side when the contrast is the point.
@@ -27,7 +27,7 @@ Write in classic style: plain, concrete prose that shows the reader something, e
 
 Pick two or three kinds of diagram and reuse them through the page instead of inventing a new picture each time: a stripped-down sketch of the screen for a UI change, and boxes and arrows for components and the data passing between them, with sample values on the arrows. Build them, and any list, from HTML and CSS.
 
-A code block is a `<pre>`, or an element whose CSS sets `white-space: pre` or `pre-wrap`; anything else collapses its line breaks. Check every code block for this before handing the page over.
+A code block is a `<pre>`, or an element whose CSS sets `white-space: pre` or `pre-wrap`; anything else collapses its line breaks. Check every code block for this before handing the page over, by reading the HTML itself: count the code blocks against the `<pre>` elements, and check that the tags balance. Do not open the page in a browser for it.
 
 ## Delivery
 
