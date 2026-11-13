@@ -1,8 +1,12 @@
-"""Edit the body of a GitHub issue or pull request, with guards.
+"""Edit the body of a GitHub issue, pull request, or comment, with guards.
 
-    gh-body-edit (issue|pr) NUMBER --replace OLD NEW
-    gh-body-edit (issue|pr) NUMBER --append-after ANCHOR NEW
-    gh-body-edit (issue|pr) NUMBER --delete OLD
+    gh-body-edit (issue|pr|comment) ID --replace OLD NEW
+    gh-body-edit (issue|pr|comment) ID --append-after ANCHOR NEW
+    gh-body-edit (issue|pr|comment) ID --delete OLD
+
+ID is a number or URL. For a comment, it is the comment's id, or its URL
+(...#issuecomment-<id>); this covers comments on issues and the
+conversation comments of pull requests.
 
 OLD, NEW, and ANCHOR are files. The text of OLD or ANCHOR must occur
 exactly once in the body, or the run aborts. The body is fetched again
@@ -12,11 +16,13 @@ The body's line endings (CRLF after a web edit) are kept: the files are
 read as LF and converted, and their final newline is not part of the
 text. After writing, the body is fetched once more and compared with
 what was written. Output is one line: OK, ABORT: <reason>, or FAIL.
+
 """
 
 import argparse
 import difflib
 import json
+import re
 import subprocess
 import sys
 
@@ -29,9 +35,34 @@ def gh(args, stdin=None):
     return proc.stdout
 
 
-def fetch(kind, number, repo):
-    out = gh([kind, "view", number, *repo, "--json", "body"])
+def comment_path(ident, repo):
+    m = re.search(r"github\.com/([^/]+/[^/]+)/(?:issues|pull)/\d+"
+                  r"#issuecomment-(\d+)", ident)
+    if m:
+        return f"repos/{m[1]}/issues/comments/{m[2]}"
+    if not ident.isdigit():
+        abort(f"not a comment id or comment URL: {ident}")
+    # gh api fills {owner}/{repo} from the current directory's repository.
+    return f"repos/{repo or '{owner}/{repo}'}/issues/comments/{ident}"
+
+
+def fetch(kind, ident, repo):
+    if kind == "comment":
+        return json.loads(gh(["api", comment_path(ident, repo)]))["body"]
+    flags = ["--repo", repo] if repo else []
+    out = gh([kind, "view", ident, *flags, "--json", "body"])
     return json.loads(out)["body"]
+
+
+def write(kind, ident, repo, body):
+    if kind == "comment":
+        gh(["api", "-X", "PATCH", comment_path(ident, repo),
+            "-H", "Content-Type: application/json", "--input", "-"],
+           stdin=json.dumps({"body": body}).encode("utf-8"))
+        return
+    flags = ["--repo", repo] if repo else []
+    gh([kind, "edit", ident, *flags, "--body-file", "-"],
+       stdin=body.encode("utf-8"))
 
 
 def read_text(path, eol):
@@ -83,8 +114,8 @@ def main():
         prog="gh-body-edit",
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("kind", choices=["issue", "pr"])
-    parser.add_argument("number", help="number or URL")
+    parser.add_argument("kind", choices=["issue", "pr", "comment"])
+    parser.add_argument("ident", metavar="ID", help="number or URL")
     parser.add_argument("-R", "--repo", metavar="OWNER/REPO")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--replace", nargs=2, metavar=("OLD", "NEW"))
@@ -92,7 +123,6 @@ def main():
     group.add_argument("--delete", metavar="OLD")
     args = parser.parse_args()
 
-    repo = ["--repo", args.repo] if args.repo else []
     if args.replace:
         mode, files = "replace", args.replace
     elif args.append_after:
@@ -100,7 +130,7 @@ def main():
     else:
         mode, files = "delete", [args.delete]
 
-    base = fetch(args.kind, args.number, repo)
+    base = fetch(args.kind, args.ident, args.repo)
     eol = "\r\n" if "\r\n" in base else "\n"
     anchor = read_text(files[0], eol)
     new = read_text(files[1], eol) if len(files) > 1 else ""
@@ -109,13 +139,12 @@ def main():
         print("OK: no change")
         return
 
-    again = fetch(args.kind, args.number, repo)
+    again = fetch(args.kind, args.ident, args.repo)
     if again != base:
         show_diff(base, again, "fetched", "now")
         abort("body changed since fetch")
-    gh([args.kind, "edit", args.number, *repo, "--body-file", "-"],
-       stdin=body.encode("utf-8"))
-    after = fetch(args.kind, args.number, repo)
+    write(args.kind, args.ident, args.repo, body)
+    after = fetch(args.kind, args.ident, args.repo)
     if after != body:
         show_diff(body, after, "written", "fetched")
         print("FAIL: body after write differs from what was written")

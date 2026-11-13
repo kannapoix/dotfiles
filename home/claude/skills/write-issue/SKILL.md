@@ -90,9 +90,11 @@ The state lives in one comment on the parent, edited in place, so the work survi
   - <question, and who answers it>
 ```
 
+Find the comment, then change only the lines that moved, as with a body (Writing to GitHub):
+
 ```bash
 gh api repos/<owner>/<repo>/issues/<parent>/comments --jq '.[] | select(.body | startswith("<!-- write-issue-status -->")) | .id'
-gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@status.md
+gh-body-edit comment <id> -R <owner>/<repo> --replace old.md new.md
 ```
 
 ## Writing
@@ -121,7 +123,7 @@ Show only what the user decides, as rendered markdown, never a fenced dump of a 
 
 ## Writing to GitHub
 
-Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched. Keep the title unless asked.
+Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`; `gh-body-edit comment <id>` takes the same for the status comment), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched. Keep the title unless asked.
 
 ## Update
 

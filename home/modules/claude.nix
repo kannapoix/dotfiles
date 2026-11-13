@@ -6,7 +6,8 @@
 }: let
   cfg = config.modules.claude;
 
-  # Guarded edits of issue and PR bodies; the skills call it instead of gh edit.
+  # Guarded edits of issue, PR, and comment bodies; the skills call it instead
+  # of gh edit and gh api PATCH.
   ghBodyEdit = pkgs.writers.writePython3Bin "gh-body-edit" {} (builtins.readFile ../claude/bin/gh-body-edit.py);
 
   # The variable Noto CJK face in nixpkgs registers only Thin, and resvg then
