@@ -86,6 +86,49 @@
             }
             {
               type = "command";
+              # One pull request per session (global CLAUDE.md). Only the
+              # transcript lines this session wrote count: a fork keeps its
+              # parent's lines under the parent's sessionId, and the session a
+              # PR is handed to may start as a fork. A merged or closed PR has
+              # no writer left to clash with; when gh cannot tell, the PR
+              # counts as open.
+              command = ''
+                input=$(cat)
+                n=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r \
+                  '[.tool_input.command // "" | scan("(?:^|[^[:alnum:]_-])gh +pr +create(?![[:alnum:]_-])")] | length')
+                case "$n" in
+                  "" | 0) exit 0 ;;
+                  1) ;;
+                  *)
+                    echo "This command opens $n pull requests. One session holds one PR, so that only its own review handling and Auto-fix write to it: open this session's PR alone, and hand each other PR to a session of its own (in the desktop app, start_session, or hand_off_to_session for the task in flight, naming the branch and what the PR is for; elsewhere, tell the user which PRs are left to open)." >&2
+                    exit 2
+                    ;;
+                esac
+                sid=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.session_id // ""')
+                transcript=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.transcript_path // ""')
+                [ -n "$sid" ] && [ -r "$transcript" ] || exit 0
+                open=""
+                for url in $(${pkgs.jq}/bin/jq -Rrn --arg s "$sid" '
+                  reduce (inputs | fromjson? | objects | select(.sessionId == $s)
+                          | .message.content? | arrays | .[] | objects) as $c
+                    ({ids: {}, urls: []};
+                     if $c.type == "tool_use" and $c.name == "Bash" and ($c.input.command? // "" | tostring | test("gh +pr +create"))
+                     then .ids[$c.id] = true
+                     elif $c.type == "tool_result" and .ids[$c.tool_use_id // ""]
+                     then .urls += [$c.content | tostring | scan("https://github\\.com/[^/\\s\"]+/[^/\\s\"]+/pull/[0-9]+")]
+                     else . end)
+                  | .urls | unique | .[]' "$transcript"); do
+                  state=$(${pkgs.coreutils}/bin/timeout 15 ${pkgs.gh}/bin/gh pr view "$url" --json state --jq .state 2>/dev/null) || state=""
+                  case "$state" in MERGED|CLOSED) ;; *) open="$open $url" ;; esac
+                done
+                if [ -n "$open" ]; then
+                  echo "This session already opened$open, and it is not merged or closed. One session holds one PR, so that only its own review handling and Auto-fix write to it: hand this PR to a session of its own (in the desktop app, start_session, or hand_off_to_session for the task in flight, naming the branch and what the PR is for; elsewhere, tell the user which PR is left to open). If this PR replaces that one, ask the user to close that one first." >&2
+                  exit 2
+                fi
+              '';
+            }
+            {
+              type = "command";
               # Permission rules match only the plain spelling, so this also
               # catches `git -C dir push`, options before a rebuild subcommand,
               # and running a built generation's activate script directly. Each

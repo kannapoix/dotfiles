@@ -23,6 +23,12 @@ One commit per change. What may happen to the branch depends on its stage:
 
 An instruction to keep a pull request to one commit, from an issue for example, covers the draft stage only.
 
+# One pull request per session
+
+A session holds one pull request, so that only that session's review handling and Auto-fix write to it. When work splits into more than one PR, for whatever reason (a split for review, a repository rule that keeps some changes such as CI permissions in a PR of their own, a stack), keep one PR here and hand each other PR to a session of its own as it is about to be opened, with its branch and what it is for: in the desktop app, `start_session`, or `hand_off_to_session` for the task in flight; elsewhere, tell the user which PR is left to open. A PR this session opened or bound before handing it over is `unbind_pr`ed here, so that this session's Auto-fix stops pushing to it. A PreToolUse hook denies a command that opens two PRs, and `gh pr create` in a session whose earlier PR is still open.
+
+A session can still end up holding more than one, such as a fork, which inherits every binding of the session it came from (`get_status` reports them as `inherited`). Split them the same way: keep the PR this session is for and `unbind_pr` the others. The session it came from keeps its bindings, the PR this session kept included: ask it with `SendMessage` to unbind that PR, and when that cannot be done, tell the user in one line which session still holds which PR.
+
 # Steps and questions for the user
 
 Write every reply, status line included, in the language of the user's latest message, not that of the files, tool output, or instruction files in view.
