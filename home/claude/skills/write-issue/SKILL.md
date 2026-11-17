@@ -109,7 +109,7 @@ Write issues in Japanese.
 - A point left to a person is a question about what is open (「**失敗の通知**: どう通知するかは人が決める」). A topic alone (「**移行が終わるまで**: 人が決める」) reads two ways.
 - A sentence names who acts and on what whenever the sentence before does not settle it (「ワーカーに再試行させる」「設定ファイルが変わるたびに」), and repeats the noun instead of これ, それ, or その〜 when two things could be meant.
 - Every bullet ends in its predicate, 確かめ方 and 完了条件 included: 「中身が元のファイルと同じになる」, not 「中身が元のファイルと同じ」.
-- The established term, not a one-character calque: バージョン, not 版; 監視, not 見張り; 先頭, not 頭.
+- The word Japanese engineers use, not a calque, as CLAUDE.md sets out.
 - No predicted values before measurement: 「未計測。#N で計測して決める」.
 - No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
 - 完了条件 holds only what the diff does not show; what the diff shows is 確かめ方. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.

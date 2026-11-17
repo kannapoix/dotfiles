@@ -47,6 +47,8 @@ An overview, such as a file's header comment, a PR description's summary, or a s
 
 A comment, commit message, or PR description covers only what its change does. A decision about later or separate work, such as a task still to come and what it will need, goes in the issue that owns that work.
 
+In Japanese, in replies as much as in code, issues, and PRs, use the word Japanese engineers use, not a word-for-word rendering of the English, which makes the reader translate it back: 通知, not 知らせ; 発火する, not 鳴る; バージョン, not 版. A verb or a metaphor can be a calque as much as a one-character noun. When unsure, take the word the vendor's Japanese documentation uses, or keep the English term (severity).
+
 # Causes
 
 A fix that removes the symptom is not finished until the cause is named. Before calling a bug fixed, say in one line what caused it and what evidence says so — a log line, a `git log -S` hit, a failing test, a repro. Where there is no evidence for the step below, stop and call it a hypothesis rather than filling the gap with something plausible. Keep going down while the evidence holds, and stop at a cause that can actually be changed. When the same failure turns up a second time, the cause to name is why the first fix let it through.
