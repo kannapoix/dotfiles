@@ -15,14 +15,26 @@ You are collecting improvements to the **harness**: the skills, settings, hooks,
   - a permission prompt that appears on every run
   - a procedure the user explained by hand instead of pointing at a file
   - a procedure kept in the project's memory: a sign it belongs to the team
+  - a rule about how to work kept in the project's memory that holds in every project: memory notes are read only on demand, so it belongs in the harness
   - information that took a long time to find
   - information Claude could not reach at all, such as logs or a service's state
   - something Claude did that it should not have
   - a mistake a check could have caught: a hook, a lint rule, a type, a test. An existing check that is unwired or broken is the finding before a new one
-  - an instruction in CLAUDE.md, a skill, or memory that did not change what Claude did
+  - an instruction in CLAUDE.md, a skill, or memory that did not change what Claude did (see below)
   - an expensive tool call: a large output read whole, the same search repeated, a slow command where a cheap one would do
 
   Rank candidates by severity and walk them one at a time: what you saw, the evidence, and whether to include it. Wait for the answer before moving on.
+
+## When an instruction did not work
+
+Another sentence beside one that failed usually fails the same way, and every added line makes the rest of the file weaker. Find which of these it was, with evidence, before proposing text:
+
+- **Not loaded**: the rule sat where the session never read it, such as a memory note behind its index line, or a skill that was not invoked. Move it to where it loads.
+- **Read narrowly**: the model followed the words, not the intent. Examples were taken for the whole rule ("one-character calque" did not cover a verb), or a word set its scope ("a sentence" did not cover a heading or a table cell). State the scope and the reason, and mark examples as examples.
+- **Contradicted**: another line in the same file or a template allows what the rule forbids, and the model picked that one. Remove or reconcile the other line.
+- **Fixed shape**: the mistake can be detected mechanically, so prose is the wrong tool (below).
+
+The fix follows the cause: move, widen, reconcile, or check. Prefer changing or removing a line to adding one.
 
 ## Harness, team, or project-local
 
@@ -38,8 +50,8 @@ Wherever it goes, a mistake with a fixed shape (a pattern, a banned call, a file
 
 One fenced code block, starting with the line `# Harness improvement brief`, the project name, and the date. For each item:
 
-- **What happened**: quote the actual commands, tool calls, or prompts, and how many times it recurred.
-- **Desired behavior**: what should happen next time.
+- **What happened**: quote the actual commands, tool calls, or prompts, and how many times it recurred. When an existing instruction should have prevented it, name where it is and which cause above it was.
+- **Desired behavior**: what should happen next time, and which lines change or go; a new line only where no existing one can carry it.
 - **Concrete example**: for a skill, the invocation and expected output; for an alias, the command as typed; for a setting, the exact rule.
 - **Tentative type**: skill, claude.nix setting (permission or hook), git.nix alias, memory, or CLAUDE.md. A guess the dotfiles session may overrule.
 - **References**: paths, PR or issue URLs, commit hashes. Point at existing artifacts instead of restating them.
