@@ -1,16 +1,18 @@
 ---
 name: write-issue
-description: Settle a spec on a parent issue with the user, then cut it into sub-issues that a separate execution agent can carry out from the issue alone, and create them under the parent. Use in a planning session when work is being shaped or handed to an execution agent ("issue にして", "spec にして", "タスクに分けて", "sub-issue を切って", "write an issue for this"), and when a changed decision has to be carried into the sibling issues. Stops for approval after each stage and creates nothing before it. Counterpart of work-issue.
-argument-hint: "<parent issue number or the goal, or an existing sub-issue to update>"
+description: Settle a spec on a parent issue with the user, then cut it into sub-issues that a separate execution agent can carry out from the issue alone, and create them under the parent. Use in a planning session when work is being shaped or handed to an execution agent ("issue にして", "spec にして", "タスクに分けて", "sub-issue を切って", "write an issue for this"), when a changed decision has to be carried into the sibling issues, and when an existing issue is rewritten in the current form ("今の形式に書き直して"). Stops for approval after each stage and creates nothing before it. Counterpart of work-issue.
+argument-hint: "<parent issue number or the goal, or an existing issue to update or rewrite>"
 ---
 
-A sub-issue is thin only when the spec above it is thick. The parent issue holds the spec: why the work exists, what was decided and why, what is uncertain, and how correctness will be shown. Each sub-issue links there for the reasons and carries only what is its own. The execution session sees only the issue and its parent; whatever this session knows and both leave out becomes a guess or a stop over there.
+A sub-issue is thin only when the spec above it is thick. The parent issue holds the spec: why the work exists, what was decided and why, what is uncertain, and how correctness will be shown. Each sub-issue says in its own words what it is for, links to the parent for the reasons behind the decisions, and carries only the decisions and checks that are its own. The execution session sees only the issue and its parent; whatever this session knows and both leave out becomes a guess or a stop over there.
 
-Say in one line what you are doing: "#N を spec にしてタスクに分ける", or an update of #M.
+Say in one line what you are doing: "#N を spec にしてタスクに分ける", an update of #M, or a rewrite of #M.
 
 ## Stages
 
 Work in numbered stages. At the end of each one marked **Stop**, wait for the user's approval. Approval of one stage is never approval of the next, and "looks good" on the spec does not approve the cut.
+
+The two templates in this skill's directory, `spec.md` for the parent and `sub-issue.md` for each piece, say under each heading what belongs there. Read the template before drafting from it, and read Writing below before any body.
 
 ### 1. Place
 
@@ -18,20 +20,13 @@ The spec lives in the parent issue's body. Read the parent if it exists: body, c
 
 ### 2. Spec — Stop
 
-Take the headings from `spec.md` in this skill's directory. Start from the headings and a few short bullets under each, and grow it with the user; do not arrive with a finished document.
-
-- 背景: facts with links, not a list of specifics.
-- ゴール: success someone can observe, and any ordering constraint.
-- 変更方針: each decision and its reason. Something deliberately not done is a decision only when it has a reason worth keeping; write it as one ("…はしない。…だから"), never as a scope section. A point left to a person is marked 人が決める.
-- 自信のない判断: the three decisions you are least sure of, each with what would show it wrong. This is where the user can intervene before code buries the doubt.
-- 確かめ方: the seam the tests observe behavior at (the highest available, existing ones preferred) and the oracle that says a result is right. For a migration, pinning current behavior comes before changing it; if no oracle can be named, say the work is not ready.
-- 完了条件: what is checked after the sub-issues merge, and what a person does after merge.
+Draft from `spec.md`. Start from the headings and a few short bullets under each, and grow it with the user; do not arrive with a finished document.
 
 End by proposing whether stage 3 is needed (several systems touched, a flow across them, or something that could break far away) and let the user decide. On approval, write the spec into the parent (Writing to GitHub) and create the status comment; say before writing that both will be written. When the parent already has a body, name what the spec drops from it before writing.
 
 ### 3. Mechanism — Stop, only when the user asked for it
 
-Under 仕組み: the systems this touches, the flow in order, and what could break elsewhere. No file paths or signatures; those belong to the execution session.
+Fill the spec's 仕組み section.
 
 ### 4. Cut — Stop
 
@@ -47,7 +42,7 @@ Show the cut as a numbered list. For each piece, first in plain words: what it d
 
 ### 5. Draft the sub-issues
 
-Draft every piece from `sub-issue.md` in this skill's directory, each in its own file in the scratchpad. 背景 links to the parent's spec for the reasons; 変更方針 holds only decisions this issue makes; 完了条件 holds only what the diff does not show. 確かめ方 holds one or two conditions that show the diff is right, such as a test that passes or a behavior in a named case; a piece without one is not ready to draft. No steps and no commands: which files to touch, in what order, and how to run the checks are the execution session's to find. A condition to verify first is a fact in 背景, and what must not change is a 変更方針 line (「…はしない」).
+Draft every piece from `sub-issue.md`, each in its own file in the scratchpad. A piece with no 確かめ方 condition is not ready to draft: go back to the cut.
 
 ### 6. Check
 
@@ -58,6 +53,7 @@ Run this list yourself and fix what it finds before showing anything:
 - Step scan: no line that decides nothing, and no line that transcribes code.
 - Proportion: the sub-issues together are not several times longer than the spec.
 - Review focus: for each input or failure the spec implies but does not discuss, the one most likely to bite has a test owned by some sub-issue.
+- Writing: every heading, table cell, and bold label names whose thing it is; each identifier comes after the plain words that say what it is; no action noun is a subject; no calque.
 
 Then show the sub-issues (Showing in chat). **Stop.**
 
@@ -99,27 +95,24 @@ gh-body-edit comment <id> -R <owner>/<repo> --replace old.md new.md
 
 ## Writing
 
-Write issues in Japanese.
+Write issues in Japanese. The rules hold for every line of a body, a heading, a table cell, or a bold label as much as a sentence, since a reader may read any line alone.
 
-- No space between a numeral and its counter (「1つ」「2回目」); a space after `#N`.
 - The human sections hold decisions only and read without the code: behavior, contracts, and their reasons. Job names, lists of paths, and conditional expressions stay out; the execution session finds them in the code. The issue is what a reviewer reads from the PR, and later the record of why, so it has to outlast the code.
-- A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
-- Short nested bullets. Start as a small skeleton; add a table or a diagram only when asked.
-- A bullet with a bold label and a colon has a noun for the label, naming what the line settles (「**通知**」「**既存の設定**」), and a whole sentence after the colon carrying the decision and its reason. A label that holds the decision leaves only 「〜ため」 or a fragment after it, and the line no longer reads on its own.
+- Short nested bullets. Start as a small skeleton; add a table or a diagram only when asked, apart from the overview table of the next rule.
+- A body that settles three or more decisions of the same kind, such as alerts, endpoints, or jobs, lists them first in one overview table (name, weight, condition), then gives each its own `###` with its reason, and puts the rules every item shares in one section instead of repeating them. A policy the team has to see gets a section of its own, headed for that reader. The template's headings then serve as a checklist of what to cover, except 確かめ方 and 完了条件, which stay as headings. Show this outline and ask before writing the body in it.
+- A line names whose thing it is and who acts on it, unless the line before settles it (「ワーカーの再起動」, not 「再起動」; 「ワーカーに再試行させる」), and repeats the noun instead of これ, それ, or その〜 when two things could be meant. The one who acts is a named thing, defined once (「定期的に動く監視ジョブ」), never an action noun such as 判定 or 確認.
+- An identifier, such as a job, monitor, or setting name, comes only after the plain words that say what it is, in parentheses: a reviewer who has not seen the code reads the words, not the name.
+- A bold label with a colon is a noun naming what the line settles (「**通知**」「**既存の設定**」), followed by a whole sentence carrying the decision and its reason. A label that holds the decision leaves only 「〜ため」 or a fragment after it, and the line no longer reads on its own.
 - A point left to a person is a question about what is open (「**失敗の通知**: どう通知するかは人が決める」). A topic alone (「**移行が終わるまで**: 人が決める」) reads two ways.
-- A sentence names who acts and on what whenever the sentence before does not settle it (「ワーカーに再試行させる」「設定ファイルが変わるたびに」), and repeats the noun instead of これ, それ, or その〜 when two things could be meant.
 - Every bullet ends in its predicate, 確かめ方 and 完了条件 included: 「中身が元のファイルと同じになる」, not 「中身が元のファイルと同じ」.
+- A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
 - The word Japanese engineers use, not a calque, as CLAUDE.md sets out.
-- No predicted values before measurement: 「未計測。#N で計測して決める」.
-- No 人のゲート, スコープ外, or 依存 sections. Order goes in ゴール or 変更方針, and between siblings also as blocked-by.
-- 完了条件 holds only what the diff does not show; what the diff shows is 確かめ方. A step a person does before merge goes in the PR description; a check after merge goes in the parent's 完了条件.
-- work-issue's own rules (the size check, the review, push, the draft PR, the report, and when to stop) stay out of the issue, since a copy goes stale when work-issue changes and the issue would then contradict it. Infrastructure changes run PR, then the person applies to dev, then checks, then review, then merge, and the person's checks are 完了条件 lines in that order. A check goes after merge only when it needs the merged state, such as making a job a required check, which waits until the job runs on the default branch; that line says what it waits for. An API test the agent can run itself is a 確かめ方 condition.
-- No history in the issue: no "keep it to one commit", no amend or squash. CLAUDE.md sets that by the pull request's stage.
+- No space between a numeral and its counter (「1つ」「2回目」); a space after `#N`.
 - Title: a verb and its object that someone without the background understands.
 
 ## Showing in chat
 
-Show only what the user decides, as rendered markdown, never a fenced dump of a body. Bundle the questions that are the user's to decide into one message and settle everything else yourself; explain each option or list item in plain words before asking about it. For sub-issues, show each one's title, 背景, ゴール, 変更方針, 確かめ方, and 完了条件. Do not list small derived tasks; end with at most two next steps on the main line of the work.
+Show only what the user decides, as rendered markdown. Bundle the questions that are the user's to decide into one message and settle everything else yourself; explain each option or list item in plain words before asking about it. For sub-issues, show each one's title and every section. End with at most two next steps on the main line of the work, without the small tasks that follow from them.
 
 ## Writing to GitHub
 
@@ -129,6 +122,17 @@ Create nothing before the stage's approval. The user edits issues on the web at 
 
 When a decision changes, change the spec first, then every sub-issue it reaches, every section in the same edit. Show the proposal as a draft is shown, list the sibling issues it reaches, and update them together on approval.
 
+To rewrite an existing issue's body as a whole, as for one written before the current templates, follow [rewrite.md](rewrite.md): the draft is a file the user can edit too, and it is checked against the parent and the siblings first.
+
 ## Measure
 
 Two numbers tell whether the spec and the issues were complete: how many times an execution session stopped for a decision they did not cover, and how many times a body was rewritten (`userContentEdits { totalCount }` on the issue in GraphQL). Both should fall.
+
+## Do not
+
+- Do not put steps or commands in a sub-issue: which files to touch, in what order, and how to run the checks are the execution session's to find.
+- Do not add sections the templates lack, such as 人のゲート, スコープ外, or 依存. Order goes in ゴール (この issue でやること in a sub-issue) or 変更方針, and between siblings also as blocked-by; something deliberately not done is a 変更方針 line with its reason.
+- Do not copy work-issue's own rules (the size check, the review, push, the draft PR, the report, when to stop) into an issue: a copy goes stale when work-issue changes, and the issue then contradicts it.
+- Do not write history into an issue, such as keeping one commit, amending, or squashing; CLAUDE.md sets that by the pull request's stage.
+- Do not write a value before it is measured; write 「未計測。#N で計測して決める」.
+- Do not paste a body into chat as a fenced block.

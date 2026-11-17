@@ -1,15 +1,15 @@
-## 背景
-<One or two lines: which part of the parent's spec this carries, with the link. The reasons stay in the parent.>
+## この issue でやること
+<One paragraph that reads without opening the parent: the state this issue brings about, and a link to the part of the parent's spec it carries. A fact the work depends on, such as something another issue put in place, is stated with its link. An ordering constraint goes here, and between siblings also as blocked-by.>
 
-## ゴール
-<The end state of this piece in one paragraph. An ordering constraint goes here, and between siblings also as blocked-by.>
+## 何を守るか
+<What breaks or goes unnoticed without this, and what it leaves alone because something else already covers it. The reasons behind the spec's decisions stay in the parent.>
 
 ## 変更方針
-- **<what a decision only this issue makes is about, as a noun>**: <the decision and why, as a whole sentence; one or two lines>
+- **<what a decision only this issue makes is about, as a noun>**: <the decision and why, as a whole sentence; one or two lines. What must not change is a line here too: 「…はしない」>
 - **<what a person will decide later is about, as a noun>**: <what is open, as a question>は人が決める
 
 ## 確かめ方
-- <a condition that shows the diff is right, checkable by reading or running it; name the test or the behavior, not the command>
+- <one or two conditions that show the diff is right, checkable by reading or running it, such as a test that passes or a behavior in a named case, an API test the agent can run included; name the test or the behavior, not the command>
 
 ## 完了条件
-- [ ] <an observable state the diff does not show, one per line>
+- [ ] <a state the diff does not show, one per line, in the order it comes about. For an infrastructure change: applied to dev and checked there, before review and merge; the steps that get there go in the PR description, not here. A check that needs the merged state, such as making a job a required check, goes last and says what it waits for.>
