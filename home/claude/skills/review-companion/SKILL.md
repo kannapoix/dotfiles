@@ -10,6 +10,7 @@ Read the arguments. A target alone means a full review (below). A target plus a 
 
 ## Prepare
 
+- Before the first message, and again whenever the review resumes after a compaction or a pause, re-read the target as it is now: for a PR, its head commit, title, body, the state of its linked issues, and what happened on it since your last read (renames, force pushes, reviews). A fact that reached you through a summary of earlier turns is unverified until re-read. Say in the first line what you re-read and what changed.
 - When the PR is to be worked on in this session's worktree, check it out first with `/load-pr <PR>`; the surrounding code you read is then the code under review, not the session's branch. When its report says the default branch has commits on the PR's files that the stacked base lacks, what lands will differ from what you read: read those files on the default branch too, and say so in the first message's first line.
 - Read the existing discussion first (review comments, comment threads, linked issues). Do not repeat what is already raised or resolved. A mismatch between what was agreed there and what the target now says is itself a finding.
 - Never judge the target alone. Read what it calls, what calls it, its siblings, the docs and specs it references, the real resources it touches, the current implementation a design describes. When a claim rests on an external spec or a pinned version, fetch the primary source and check it. Cite what you used.
