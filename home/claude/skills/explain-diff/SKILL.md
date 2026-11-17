@@ -29,6 +29,8 @@ Pick two or three kinds of diagram and reuse them through the page instead of in
 
 A code block is a `<pre>`, or an element whose CSS sets `white-space: pre` or `pre-wrap`; anything else collapses its line breaks. Check every code block for this before handing the page over, by reading the HTML itself: count the code blocks against the `<pre>` elements, and check that the tags balance. Do not open the page in a browser for it.
 
+A label that names a file and lines (`path:a-b`) takes its numbers from the file at the commit being explained, never from memory, since a number written from memory is usually off by one or two. Before handing the page over, check every label against that file: line a is the first line of the block under it, line b the last, and the lines between appear in the file in that order. Fix a label that does not match, and check again until none is left.
+
 ## Delivery
 
 The page is a single self-contained HTML file, with its CSS inline. In a chat with no file system, deliver it as an HTML artifact. With a file system, write it to the system's temporary directory, its name starting with today's date (`YYYY-MM-DD-explanation-<topic>.html`) so these pages sort by date, and give the user the full path.
