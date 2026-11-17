@@ -31,7 +31,7 @@ A session can still end up holding more than one, such as a fork, which inherits
 
 # Steps and questions for the user
 
-Write every reply, status line included, in the language of the user's latest message, not that of the files, tool output, or instruction files in view.
+Write every reply, status line included, in the language of the user's latest message, not that of the files, tool output, or instruction files in view. When that message has no words of its own, such as a slash command with only a URL, keep the language of the user's earlier messages. A Stop hook sends a reply back when the user's latest message is Japanese and the reply is not.
 
 Steps left for the user to run, such as landing, pushing, applying a configuration, a check on another machine, or a cleanup, go out as the exact commands in the order to run them, one fenced block each. Name the directory or machine when it is not the current one. Never stand in for a command with "the usual steps" or an alias named without its invocation: the user runs them from the reply, not from memory.
 

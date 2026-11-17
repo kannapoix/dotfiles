@@ -229,6 +229,50 @@
           ];
         }
       ];
+      Stop = [
+        {
+          hooks = [
+            {
+              type = "command";
+              # The reply-language line in CLAUDE.md kept failing, most often in
+              # the closing text after a tool call whose output is English. When
+              # the user's latest message is Japanese (3 in 10 letters or more
+              # kana or kanji) and the last reply has under 1 in 10, both
+              # counted without code, URLs, and tags, the reply goes back once.
+              # Only messages the user typed count (origin human). A message
+              # with no words of its own, such as a slash command with a URL,
+              # keeps the earlier message's language, and Japanese when there
+              # is none. A transcript with no typed message, as from claude -p,
+              # is left alone.
+              command = ''
+                input=$(cat)
+                [ "$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.stop_hook_active // false')" = true ] && exit 0
+                transcript=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.transcript_path // ""')
+                [ -r "$transcript" ] || exit 0
+                ${pkgs.coreutils}/bin/tail -n 2000 "$transcript" | ${pkgs.jq}/bin/jq -Rrn '
+                  def text: if type == "string" then . else (map(select(.type? == "text") | .text) | join("\n")) end;
+                  def prose: gsub("(?s)<system-reminder>.*?</system-reminder>|<command-[a-z]+>.*?</command-[a-z]+>|```.*?```|`[^`\n]*`|https?://[^\\s)>\\]]+"; " ");
+                  def cjk: [scan("[\\p{Han}\\p{Hiragana}\\p{Katakana}]")] | length;
+                  def letters: [scan("\\p{L}")] | length;
+                  reduce (inputs | fromjson? | objects) as $l ({seen: false, user: null, reply: null};
+                    if $l.type == "user" and $l.origin.kind? == "human" then
+                      ($l.message.content | text | prose) as $t
+                      | .seen = true | .reply = null
+                      | if ($t | letters) > 0 then .user = $t else . end
+                    elif $l.type == "assistant" then
+                      ($l.message.content | if type == "array" then map(select(.type == "text") | .text) | join("\n") else "" end) as $t
+                      | if ($t | length) > 0 then .reply = $t else . end
+                    else . end)
+                  | select(.seen and .reply != null)
+                  | (.user // "日本語" | [cjk, letters]) as [$uc, $ul]
+                  | (.reply | prose | [cjk, letters]) as [$rc, $rl]
+                  | select($uc * 10 >= $ul * 3 and $rl >= 40 and $rc * 10 < $rl)
+                  | {decision: "block", reason: "The last reply is not in Japanese, the language of the latest message from the user. Write it again in Japanese, keeping code, identifiers, commands, and quotations as they are, and call no tool for it."}'
+              '';
+            }
+          ];
+        }
+      ];
     };
     permissions = {
       # Bash is not covered, and CLIs before 2.1.314 ignore the key. From
