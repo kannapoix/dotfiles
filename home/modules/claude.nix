@@ -209,6 +209,23 @@
                 fi
               '';
             }
+            {
+              type = "command";
+              # In `cd dir; rest` or a cd on a line of its own, a cd that fails
+              # (a scratchpad subdirectory cleared on restart, say) leaves rest
+              # running in the old directory, where it writes into the
+              # worktree. `cd dir || exit; rest` and `if cd dir; then` do not
+              # match, and a command that turns on `set -e` passes.
+              command = ''
+                cmd=$(${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                if printf '%s' "$cmd" | ${pkgs.jq}/bin/jq -Rse '
+                     test("(^|[;&|(\\n])[[:blank:]]*cd([[:blank:]]+[^;&|\\n]*)?[[:blank:]]*(;|\\n[[:blank:]]*[^[:space:]])")
+                     and (test("(^|[;&|\\n])[[:blank:]]*set[[:blank:]]+-[a-z]*e") | not)' >/dev/null; then
+                  echo 'cd is followed by ; or a new line, so when cd fails the rest still runs in the old directory. Join it with && (with mkdir -p first when the directory may not exist), or use absolute paths.' >&2
+                  exit 2
+                fi
+              '';
+            }
           ];
         }
       ];
