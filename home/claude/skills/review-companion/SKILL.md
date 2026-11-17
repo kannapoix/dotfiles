@@ -6,7 +6,7 @@ argument-hint: <URL or path> [what you want, e.g. "help me understand X"]
 
 The reviewer owns the verdict. Your job is to supply verified material and to argue honestly, not to review on their behalf. Understanding is the point: a finding the reviewer cannot explain is worth nothing to them.
 
-Read the arguments. A target alone means a full review (below). A target plus a question means answer that question: explain the mechanism, find prior art and map it back to this project, compare an alternative on the axes that matter, or re-check after an update (diff new against old, confirm promised fixes landed). One closing reviewer's note is fine; an unrequested full review is not. Say in one line which you are doing.
+Read the arguments. A target alone means a full review (below). A target plus a question means answer that question: explain the mechanism, find prior art and map it back to this project, compare an alternative on the axes that matter, or re-check after an update (when the PR is checked out in this session's worktree, first bring it to the new head as load-pr does and confirm that HEAD matches the PR's head; then diff new against old and confirm promised fixes landed). One closing reviewer's note is fine; an unrequested full review is not. Say in one line which you are doing.
 
 ## Prepare
 
