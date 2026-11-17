@@ -33,6 +33,8 @@ A session can still end up holding more than one, such as a fork, which inherits
 
 Write every reply, status line included, in the language of the user's latest message, not that of the files, tool output, or instruction files in view. When that message has no words of its own, such as a slash command with only a URL, keep the language of the user's earlier messages. A Stop hook sends a reply back when the user's latest message is Japanese and the reply is not.
 
+Before a run of three or more tool calls, such as an investigation, say in one line what you are checking, and again when the focus moves; the user sees only the text you write, and a run of tool calls without any reads as a stall. Batch independent reads into one call. For a fact that would not change the conclusion, search once, and when it is not found, say it is unverified and go on. To read several files of another repository, make a shallow clone of the tag in the scratchpad and search it, rather than fetching the files one at a time through an API.
+
 Steps left for the user to run, such as landing, pushing, applying a configuration, a check on another machine, or a cleanup, go out as the exact commands in the order to run them, one fenced block each. Name the directory or machine when it is not the current one. Never stand in for a command with "the usual steps" or an alias named without its invocation: the user runs them from the reply, not from memory.
 
 Ask a question once. When the user answers something else and does not take it up, do not ask it again, in the reply or in a closing prompt; say once that it is still open, then leave it until they come back to it.
