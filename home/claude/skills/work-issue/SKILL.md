@@ -56,12 +56,12 @@ The 要確認ポイント, the points the person has to check before trusting th
 
 1. Implement until 確かめ方 holds, in the order 変更方針 and the code call for, or in the order of 手順 where an older issue has one. Before the review pass, `git diff --stat origin/<base>`; measured against [Google's small CLs guide](https://google.github.io/eng-practices/review/developer/small-cls.html), a large change gets a split proposal, presented in the session as for a changed premise, and you wait. So does a log with more than five 要確認ポイント.
 
-   Before using an external API, option, or library, read its version from the lock file (`flake.lock` for nixpkgs, `go.mod`, `Cargo.lock`, and the like) and check how it behaves in the official documentation for that version; where the documentation is thin, the source at the locked version will do. What you could not confirm goes into the verification record. The evidence goes in 選定の根拠 or the report, not as a URL in a code comment.
+   Before using an external API, option, or library, read its version from the lock file (`flake.lock` for nixpkgs, `go.mod`, `Cargo.lock`, and the like) and check how it behaves in the official documentation for that version; where the documentation is thin, the source at the locked version will do. What you could not confirm goes into the verification record. The evidence goes in the PR description or the report, not as a URL in a code comment.
 2. Review once, for findings only, then fix what matters. The pass is `/code-review`, without `--fix` and not `ultra`; a 手順 line that names `/code-review --fix` is this pass, run the same way. Rate each finding that holds by what happens to the person who uses the change as it stands, not by the severity the reviewer gave: important when they would get a wrong result, be led into a wrong check, lose data, or hit a step that fails; minor otherwise. Fix the important ones in one pass, with no second review; the verifier in 4 is the next check. Before fixing one that a test can show, write a test that fails on it. Where no test can, as in prose or a runbook, confirm the fix with a syntax check or by running it, stubbing anything outside the worktree. Minor findings stay unfixed and go into the report, so the diff carries only what the issue and the important findings need. Do not record why a finding was rejected. A finding that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A reviewer that cannot be launched is named, with the error, in the verification record.
-3. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a choice needs justifying, in 選定の根拠.
+3. Commit as CLAUDE.md sets out, even where 手順 says to keep one commit. A justification that exists for reviewers of this change goes in the commit message and, when a reviewer would ask about another approach, in the description's 選ばなかった案.
 4. Verify with the `verifier` subagent, from a clean tree. Give it the issue, the base as `origin/<base>`, and the branch, and nothing of what you did or why, the decision log included: it judges the diff cold, so your account would only steer it. On `accepted-with-reservations`, go on without changing the tree; the reservations reach the person through the verdict in the verification record. On `rejected`, fix what `must_fix` names that the issue covers, commit as in 3, and verify again; after a second rejection, stop and put both verdicts in the report. A `must_fix` that needs a decision the issue does not cover stays unchanged and goes into the report as a ruling. A verifier that cannot be launched is named, with the error, in the verification record.
 5. Run `git push` only when the current user message explicitly asks to push. 制約 naming a branch is not that ask, and neither is a request to add a comment, to commit, or to edit the PR description. Otherwise the commit stays local: report its short SHA and the push command (`git push origin HEAD`, or `git push --force-with-lease` when the branch was rewritten), and wait for the person. The draft PR waits with that push.
-6. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description below. If the person already opened the PR, update its description with the procedure below instead. Do not push in order to reach this step.
+6. On the turn the person asked to push, once that push has landed, create the draft PR (the hook forces `--draft`) with the description the opening-a-pr skill sets out. If the person already opened the PR, update its description as that skill sets out instead. Do not push in order to reach this step.
 7. Present the report below in the session, with the HTML page beside it. Never as an issue or PR comment. A changed premise, a missing decision with no conservative option, and a split proposal are each a numbered stop in the session, as in the check above; none of them is this report.
 8. Stop. `gh pr ready`, merge, apply, and release belong to the person. From here `/close-out <PR>` follows the change to its closed issue, ticking the completion conditions and closing the issue on the person's yes. Review comments on the PR are `/address-review`'s job.
 
@@ -86,32 +86,11 @@ Alongside the report, build one HTML page at `.work-issue/<N>/report.html` as [r
 
 ## PR description
 
-````markdown
-#<N> に対応。<one line: where this sits under the parent issue>
-
-## 実装方針
-- **<decision>**
-  - <why, in two or three short sub-bullets>
-
-## 選定の根拠
-<only when a choice between candidates needs justifying; a table lists only the candidates that affect the decision>
-````
-
-- 実装方針 is for a change that makes choices a reviewer needs explained. A change with none, such as one that only adds data, has no 実装方針: it carries only what the reviewer or the person who runs it needs, such as its deploy steps.
-- A term a reader would look up is linked once, at its first occurrence, to the official documentation. Open the page and confirm the term is on it before linking. Prefer the documentation to a link into source, and for a locked dependency, the page for the locked version where one exists.
-- A value not yet measured is written as 「未計測。#N で計測して決める」, with no predicted number or table.
-- A decision made with the user during the session goes into the description when it is made, not at the end.
-- No 確認したこと section: reviewers do not need it. It goes in the verification record below.
-
-## Steps the person runs
-
-Steps such as an apply or a check on a live environment go in the PR description in the order they run, and the report and any change to the issue keep that order. Each runs before merge unless it needs the merged state, such as making a job a required check, which waits until the job runs on the default branch; ask that of a step before placing it after merge. A script on another branch runs without merging it: take it out with `git show origin/<branch>:<path>`, or check that branch out in a worktree.
-
-When PRs are checked together, which one waits follows from checking before merging, not from the order the code was written: put in place what the check needs (an apply, data), run the check on one branch with the other PR's files brought over, and merge both once it passes. Each PR's steps name the other PR and the branch each step runs on.
+The opening-a-pr skill sets out the description: its template, the optional parts, the steps a person runs and their order, and how to change a description the person may be editing. What you verified goes in its 動作確認 as a checklist.
 
 ## Verification record
 
-The description is for reviewers; what you checked is for the person who ran you. It is part of the session report above, never a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
+The description's 動作確認 tells reviewers what was verified; the record tells the person who ran you how you checked and what you could not. It is part of the session report above, never a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
 
 ````markdown
 ## 確認したこと
@@ -125,16 +104,6 @@ The description is for reviewers; what you checked is for the person who ran you
   <command>   # 期待: <result>
   ```
 ````
-
-## Updating a PR description
-
-The person edits it on the web while you work, so every change goes through `gh-body-edit`, which replaces one part of the current body and nothing else, aborts unless the anchor occurs exactly once and the body is still what it fetched, keeps the line endings, and checks what landed:
-
-```bash
-gh-body-edit pr <N> --replace old.md new.md    # or --append-after anchor.md new.md, or --delete old.md
-```
-
-The files hold the exact text and live in the scratchpad. Only the part asked for, no whole-body rewrite from a draft, and nothing you were not asked to change: an instruction to squash, rebase, or push does not include permission to touch the description. When the person asks for the description's links to the PR's commits to follow a force push, `gh-body-edit pr <N> --relink-commits` matches each old commit to its new one and changes the links alone, or changes nothing when a commit has no match.
 
 ## Measure
 

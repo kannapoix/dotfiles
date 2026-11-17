@@ -39,7 +39,7 @@ These follow the explain-diff skill's page rules, so change the two together.
 - One HTML file with its CSS inline.
 - A code or diff block is a `<pre>`, or an element whose CSS sets `white-space: pre` or `pre-wrap`; anything else collapses its line breaks. Check every block before handing the page over, by reading the HTML itself: count the code and diff blocks against the `<pre>` elements, and check that the tags balance. Do not open the page in a browser for it.
 - Diagrams are built from HTML and CSS, one or two kinds reused through the page.
-- The PR description's rules on linking terms and on values not yet measured hold for the page too.
+- opening-a-pr's rules on linking terms and on values not yet measured hold for the page too.
 
 ## Do not
 
