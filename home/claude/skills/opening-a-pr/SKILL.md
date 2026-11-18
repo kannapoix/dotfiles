@@ -77,7 +77,7 @@ The person edits the description on the web while you work, so every change goes
 gh-body-edit pr <N> --replace old.md new.md    # or --append-after anchor.md new.md, or --delete old.md
 ```
 
-The files hold the exact text and live in the scratchpad. Change only the part asked for, never the whole body from a draft, and nothing you were not asked to change: an instruction to squash, rebase, or push does not include permission to touch the description. When the person asks for the description's links to the PR's commits to follow a force push, `gh-body-edit pr <N> --relink-commits` matches each old commit to its new one and changes the links alone, or changes nothing when a commit has no match.
+The files hold the exact text and live in the scratchpad. Change only the part asked for, never the whole body from a draft, and nothing you were not asked to change: an instruction to squash, rebase, or push does not include permission to touch the description. When the person asks for the description's links to follow a force push, `gh-body-edit pr <N> --relink-commits` repins both links to the PR's commits and links to lines of a file at a commit (`blob/<sha>/<path>#L<a>-L<b>`): it matches each old commit to its new one and changes the links alone, or changes nothing when an old commit has no match or a linked line range no longer reads the same.
 
 ## Do not
 

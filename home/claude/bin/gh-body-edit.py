@@ -24,6 +24,13 @@ now, after a force push. Each old commit is matched to a current one by
 subject, else by patch id; the short SHA shown in the link text changes
 with the URL. The pairs are printed to stderr first, and if any old
 commit has no match the run aborts and writes nothing.
+
+It also repins links to a file at a commit (.../blob/<sha>/<path>, with
+an optional #L<a> or #L<a>-L<b>) whose commit is neither in the pull
+request nor on its base branch. The old commit is matched the same way,
+and a link with lines is repinned only when those lines read the same at
+the new commit; otherwise the run aborts, naming the link, and writes
+nothing.
 """
 
 import argparse
@@ -32,6 +39,7 @@ import json
 import re
 import subprocess
 import sys
+from urllib.parse import quote, unquote
 
 
 def run(cmd, stdin=None):
@@ -145,29 +153,28 @@ def patch_id(owner_repo, sha):
     return out.split()[0] if out.strip() else None
 
 
-def relink(ident, repo):
-    flags = ["--repo", repo] if repo else []
-    pr = json.loads(gh(["pr", "view", ident, *flags,
-                        "--json", "body,url,number,commits"]))
-    owner_repo = re.search(r"github\.com/([^/]+/[^/]+)/pull/",
-                           pr["url"])[1]
-    link = re.compile(
-        r"(\[[^\]\n]*\]\()?"
-        r"(https://github\.com/" + re.escape(owner_repo) +
-        r"/pull/" + str(pr["number"]) + r"/commits/)([0-9a-f]{40})",
-        re.IGNORECASE)
-    body = pr["body"]
-    olds = list(dict.fromkeys(m[3].lower() for m in link.finditer(body)))
-    current = {c["oid"]: c["messageHeadline"] for c in pr["commits"]}
-    stale = [sha for sha in olds if sha not in current]
-    if not stale:
-        print("OK: no change")
-        sys.exit(0)
+def file_at(owner_repo, sha, path):
+    out = try_run(["git", "show", f"{sha}:{path}"])
+    if out is None:
+        out = try_run(["gh", "api", "-H", "Accept: application/vnd.github.raw",
+                       f"repos/{owner_repo}/contents/{quote(path)}"
+                       f"?ref={sha}"])
+    return None if out is None else out.decode("utf-8", "replace")
 
-    pairs, unmatched, taken = {}, [], set()
-    pids = {}
+
+def on_base(owner_repo, base, sha):
+    # A link to code already on the base branch is not the pull request's
+    # to repin, even though its commit is not one of the PR's commits.
+    out = try_run(["gh", "api", f"repos/{owner_repo}/compare/{base}...{sha}",
+                   "--jq", ".status"])
+    return out is not None and out.decode().strip() in ("behind", "identical")
+
+
+def match_commits(owner_repo, stale, current):
+    pairs, subjects, taken, pids = {}, {}, set(), {}
     for sha in stale:
         subject = commit_subject(owner_repo, sha)
+        subjects[sha] = subject
         same = [oid for oid, s in current.items()
                 if s == subject and oid not in taken]
         if len(same) != 1:
@@ -179,25 +186,101 @@ def relink(ident, repo):
         if len(same) == 1:
             pairs[sha] = same[0]
             taken.add(same[0])
-            sys.stderr.write(f"{sha[:7]} -> {same[0][:7]}  {subject}\n")
-        else:
-            unmatched.append(f"{sha[:7]} ({subject})")
+    return pairs, subjects
+
+
+def swap_sha(m, sha_group, new):
+    # m[1] is the markdown link text with its "](", when there is one; a
+    # short SHA in it is a prefix of the old one and changes with the URL.
+    old = m[sha_group].lower()
+    text = re.sub(
+        r"\b[0-9a-f]{7,40}\b",
+        lambda s: new[:len(s[0])] if old.startswith(s[0]) else s[0],
+        m[1] or "")
+    return text + m[0][len(m[1] or ""):].replace(m[sha_group], new, 1)
+
+
+def lines(text, a, b):
+    return text.split("\n")[a - 1:b] if text is not None else None
+
+
+def relink(ident, repo):
+    flags = ["--repo", repo] if repo else []
+    pr = json.loads(gh(["pr", "view", ident, *flags, "--json",
+                        "body,url,number,commits,baseRefName"]))
+    owner_repo = re.search(r"github\.com/([^/]+/[^/]+)/pull/",
+                           pr["url"])[1]
+    text = r"(\[[^\]\n]*\]\()?"
+    commit_link = re.compile(
+        text + r"(https://github\.com/" + re.escape(owner_repo) +
+        r"/pull/" + str(pr["number"]) + r"/commits/)([0-9a-f]{40})",
+        re.IGNORECASE)
+    # Groups: 3 SHA, 4 path, 6 and 7 the first and last line.
+    blob_link = re.compile(
+        text + r"(https://github\.com/" + re.escape(owner_repo) +
+        r"/blob/)([0-9a-f]{40})(/[^\s)#?]+)"
+        r"(#L(\d+)(?:C\d+)?(?:-L(\d+)(?:C\d+)?)?)?",
+        re.IGNORECASE)
+    body = pr["body"]
+    current = {c["oid"]: c["messageHeadline"] for c in pr["commits"]}
+    commit_olds = list(dict.fromkeys(
+        m[3].lower() for m in commit_link.finditer(body)
+        if m[3].lower() not in current))
+    blob_olds = list(dict.fromkeys(
+        m[3].lower() for m in blob_link.finditer(body)
+        if m[3].lower() not in current))
+    blob_olds = [sha for sha in blob_olds
+                 if not on_base(owner_repo, pr["baseRefName"], sha)]
+    stale = list(dict.fromkeys(commit_olds + blob_olds))
+    if not stale:
+        print("OK: no change")
+        sys.exit(0)
+
+    pairs, subjects = match_commits(owner_repo, stale, current)
+    unmatched = [f"{sha[:7]} ({subjects[sha]})" for sha in stale
+                 if sha not in pairs]
+    for sha in commit_olds:
+        if sha in pairs:
+            sys.stderr.write(
+                f"{sha[:7]} -> {pairs[sha][:7]}  {subjects[sha]}\n")
     if unmatched:
         abort("no current commit matches " + ", ".join(unmatched))
 
-    def swap(m):
+    targets = {sha: pairs[sha] for sha in blob_olds}
+    problems = []
+    for m in blob_link.finditer(body):
         old = m[3].lower()
-        new = pairs.get(old)
-        if new is None:
-            return m[0]
-        text = m[1] or ""
-        # A short SHA in the link text is a prefix of the old one.
-        text = re.sub(
-            r"\b[0-9a-f]{7,40}\b",
-            lambda s: new[:len(s[0])] if old.startswith(s[0]) else s[0],
-            text)
-        return text + m[2] + new
-    return body, link.sub(swap, body)
+        if old not in targets:
+            continue
+        new = targets[old]
+        path = unquote(m[4][1:])
+        where = path + (m[5] or "")
+        new_file = file_at(owner_repo, new, path)
+        if new_file is None:
+            problems.append(f"{where} is missing at {new[:7]}")
+            continue
+        if m[6]:
+            a = int(m[6])
+            b = int(m[7] or a)
+            before = lines(file_at(owner_repo, old, path), a, b)
+            if before is None or before != lines(new_file, a, b):
+                problems.append(f"{where} differs at {new[:7]}")
+                continue
+            note = "lines unchanged"
+        else:
+            note = "file link"
+        sys.stderr.write(
+            f"{old[:7]} -> {new[:7]}  {where}  {note}  ({subjects[old]})\n")
+    if problems:
+        abort("; ".join(problems) + "; fix these links by hand")
+
+    body_new = commit_link.sub(
+        lambda m: swap_sha(m, 3, pairs[m[3].lower()])
+        if m[3].lower() in pairs else m[0], body)
+    body_new = blob_link.sub(
+        lambda m: swap_sha(m, 3, targets[m[3].lower()])
+        if m[3].lower() in targets else m[0], body_new)
+    return body, body_new
 
 
 def main():
