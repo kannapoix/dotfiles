@@ -48,7 +48,7 @@ Draft every piece from `sub-issue.md`, each in its own file in the scratchpad. A
 
 Run this list yourself and fix what it finds before showing anything:
 
-- Coverage: every decision and completion condition in the spec lands in some sub-issue or in the parent's 完了条件.
+- Coverage: every decision and completion condition in the spec lands in some sub-issue or in the parent's 完了条件, and every constraint an issue above the parent or a sibling set on what a piece uses lands in that piece.
 - Consistency: the siblings use the same terms and do not contradict each other or the spec.
 - Step scan: no line that decides nothing, and no line that transcribes code.
 - Proportion: the sub-issues together are not several times longer than the spec.

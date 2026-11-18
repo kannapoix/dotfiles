@@ -1,5 +1,5 @@
 ## この issue でやること
-<One paragraph that reads without opening the parent: the state this issue brings about, and a link to the part of the parent's spec it carries. A fact the work depends on, such as something another issue put in place, is stated with its link. An ordering constraint goes here, and between siblings also as blocked-by.>
+<One paragraph that reads without opening the parent: the state this issue brings about, and a link to the part of the parent's spec it carries. A fact the work depends on is stated with its link: what another issue put in place, and every constraint set on it anywhere above or beside this issue (an ancestor issue, a sibling, a design doc), such as where it lives or how it may be referenced. The execution session reads only this issue and its parent, so a constraint left in a grandparent or a sibling does not reach it. An ordering constraint goes here, and between siblings also as blocked-by.>
 
 ## 何を守るか
 <What breaks or goes unnoticed without this, and what it leaves alone because something else already covers it. The reasons behind the spec's decisions stay in the parent.>
