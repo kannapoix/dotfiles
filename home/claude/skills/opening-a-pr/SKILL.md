@@ -61,7 +61,8 @@ After writing it, report one line for the optional parts put in and one for thos
 
 - A term a reader would look up is linked once, at its first occurrence, to its official documentation. Open the page and confirm the term is on it before linking. Prefer the documentation to a link into source, and for a locked dependency, the page for the locked version where one exists.
 - A value not yet measured is written as 「未計測。#N で計測して決める」, with no predicted number or table.
-- A decision made with the user during the session goes into the description when it is made, not at the end.
+- A claim about what the code or the system does that a reviewer's judgement rests on, in 背景, 設計の変更, or 選ばなかった案, carries its evidence: a link to the lines pinned to a commit SHA, or the command and the line of its output that shows it. A claim with neither is cut, or marked 「未確認」. An agent's account can be confidently wrong, and the link lets a reviewer check it in one click.
+- A decision made with the user during the session goes into the description when it is made, not at the end. So does the answer to a question the person asks about the change, when a reviewer would need it too: a question asked once is one the description should have answered.
 
 ## Steps a person runs
 

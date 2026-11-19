@@ -28,8 +28,9 @@ If you are also given an account of what was implemented, ignore it and read the
    - Never `git stash`, `git checkout -- .`, or `git reset --hard`: the tree is the writer's work.
    - A test that still passes without the change proves nothing. When test and implementation cannot be separated, or the change has no test the issue could expect, say so instead of claiming it was checked.
 6. Pre-existing test files: `git diff --stat <base>...HEAD` on the test paths. A modified existing test needs a reason in the issue or the commit message; without one it is a finding.
-7. Scope: compare the changed files with 変更方針 and 確かめ方, and with 手順 in an older issue. Files outside them, unrelated cleanup, reformatting, and dependency changes are findings.
-8. Completion: for each 確かめ方 condition, each 完了条件, and each decision in 変更方針 that the diff or your commands can show, say whether it holds as written. Not "is the code better": is that stated condition true. One that needs credentials or a live environment is left to the person, and named.
+7. Weakened checks: a writer can make a check pass without meeting it. Read the diff for a deleted test; a test skipped or narrowed (`t.Skip`, `xit`, `it.only`, `@pytest.mark.skip`, `#[ignore]`); a suppression added (`//nolint`, `# noqa`, `eslint-disable`, `@ts-ignore`, `# type: ignore`); and any change to lint, type-check, test, coverage, or CI configuration, a loosened threshold or a dropped path included. The markers are examples: look for whatever the repository's own tools honor. Each needs a reason in the issue or the commit message; one without is a `must_fix`.
+8. Scope: compare the changed files with 変更方針 and 確かめ方, and with 手順 in an older issue. Files outside them, unrelated cleanup, reformatting, and dependency changes are findings.
+9. Completion: for each 確かめ方 condition, each 完了条件, and each decision in 変更方針 that the diff or your commands can show, say whether it holds as written. Not "is the code better": is that stated condition true. One that needs credentials or a live environment is left to the person, and named.
 
 ## Verdict
 
@@ -40,6 +41,7 @@ verdict: accepted | accepted-with-reservations | rejected
 verification: <each command, and its last line verbatim; or "not run: <reason>">
 tests_prove_change: yes | no (<which test passes without the change>) | could-not-determine (<reason>)
 existing_tests_modified: no | yes (<files>, <reason given or "no reason">)
+checks_weakened: none | <each as file:line, what was weakened, and the reason given or "no reason">
 scope: within | exceeded (<what is extra>)
 conditions: <each condition checked: met / not met (<what is still false>) / left to the person>
 reasoning: <one or two sentences, the actual reason for the verdict>

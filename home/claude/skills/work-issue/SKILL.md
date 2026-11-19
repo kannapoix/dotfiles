@@ -84,6 +84,8 @@ Take the rulings, the details you settled, and the external APIs you could not c
 
 Alongside the report, build one HTML page at `.work-issue/<N>/report.html` as [report.md](report.md) beside this file sets out, and end the report with the page's full path. The page adds a reading order for the change; it replaces nothing in the report. When you present the report again after the branch changed, build the page again.
 
+When the person asks about the change after the report, answer with file:line, then sort the question. One a reviewer would also ask goes into the PR description, as opening-a-pr sets out. One that uncovered a defect is fixed as a review finding would be, and the reply names the deterministic check that would have caught it (a test, a lint rule, or a verifier step) as a candidate for the repository or for `/retro`.
+
 ## Verification record
 
 The description's 動作確認 tells reviewers what was verified; the record tells the person who ran you how you checked and what you could not. It is part of the session report above, never a PR or issue comment: it is an exchange between the person and you, and other reviewers do not need it.
@@ -103,4 +105,4 @@ The description's 動作確認 tells reviewers what was verified; the record tel
 
 ## Measure
 
-The number of edits the PR description took, the number of findings the CI reviewer posted, the number of stops for decisions the issue did not cover, and the number of rulings in the report. All four should fall as the issues get better. Rulings now take most of what used to be a stop, so read those two together; the rule rests on a single trial, so watch them before trusting a trend.
+The number of edits the PR description took, the number of findings the CI reviewer posted, the number of stops for decisions the issue did not cover, the number of rulings in the report, and the number of questions the person asked about the change after the report. All five should fall as the issues get better. Rulings now take most of what used to be a stop, so read those two together; the rule rests on a single trial, so watch them before trusting a trend.
