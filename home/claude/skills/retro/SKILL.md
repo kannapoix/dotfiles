@@ -53,7 +53,7 @@ One fenced code block, starting with the line `# Harness improvement brief`, the
 - **What happened**: quote the actual commands, tool calls, or prompts, and how many times it recurred. When an existing instruction should have prevented it, name where it is and which cause above it was.
 - **Desired behavior**: what should happen next time, and which lines change or go; a new line only where no existing one can carry it.
 - **Concrete example**: for a skill, the invocation and expected output; for an alias, the command as typed; for a setting, the exact rule.
-- **Tentative type**: skill, claude.nix setting (permission or hook), git.nix alias, memory, or CLAUDE.md. A guess the dotfiles session may overrule.
+- **Tentative type**: skill, claude.nix setting (permission or hook), git.nix alias, memory, or CLAUDE.md. A correction to Japanese wording is a rule in the japanese-writing skill, new or widened. A guess the dotfiles session may overrule.
 - **References**: paths, PR or issue URLs, commit hashes. Point at existing artifacts instead of restating them.
 - **Memory notes**: the notes in this project's memory that the change makes redundant or contradicts, by file name, each with "delete" or how to revise it once the change lands; "none" when there are none. Read the memory index for this, not only the notes this session touched: a note left behind keeps steering sessions against the new rule.
 

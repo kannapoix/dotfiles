@@ -34,4 +34,4 @@ When the user corrects how a page is written and wants it to hold from now on, a
 ## Wording
 
 - Write a person's name as plain text, never `<mention-user>`. A user mention notifies that person, which is noise for them. Page mentions (`<mention-page>`) notify no one and are fine.
-- In Japanese, put no space between a digit and the counter or kana after it: 1つ, 2回目, 29文字. Keep the space after a reference such as `#123`, and between Latin words and Japanese (PR 上で).
+- In Japanese, follow the japanese-writing skill.

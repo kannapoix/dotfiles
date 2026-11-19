@@ -48,7 +48,7 @@ An overview, such as a file's header comment, a PR description's summary, or a s
 
 A comment, commit message, or PR description covers only what its change does. A decision about later or separate work, such as a task still to come and what it will need, goes in the issue that owns that work.
 
-In Japanese, in replies as much as in code, issues, and PRs, use the word Japanese engineers use, not a word-for-word rendering of the English, which makes the reader translate it back: 通知, not 知らせ; 発火する, not 鳴る; バージョン, not 版. A verb or a metaphor can be a calque as much as a one-character noun. When unsure, take the word the vendor's Japanese documentation uses, or keep the English term (severity).
+In Japanese, in replies as much as in code, issues, and PRs, use the word Japanese engineers use, not a word-for-word rendering of the English, which makes the reader translate it back: 通知, not 知らせ; 発火する, not 鳴る; バージョン, not 版. A verb or a metaphor can be a calque as much as a one-character noun. When unsure, take the word the vendor's Japanese documentation uses, or keep the English term (severity). Japanese text that someone else reads, such as an issue, a PR description, a review comment, a code comment, or a doc, follows the japanese-writing skill.
 
 # Causes
 

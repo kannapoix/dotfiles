@@ -53,7 +53,7 @@ Run this list yourself and fix what it finds before showing anything:
 - Step scan: no line that decides nothing, and no line that transcribes code.
 - Proportion: the sub-issues together are not several times longer than the spec.
 - Review focus: for each input or failure the spec implies but does not discuss, the one most likely to bite has a test owned by some sub-issue.
-- Writing: every heading, table cell, and bold label names whose thing it is; each identifier comes after the plain words that say what it is; no action noun is a subject.
+- Writing: every line, a heading, table cell, or bold label included, holds to the japanese-writing skill and to Writing below.
 
 Then show the sub-issues (Showing in chat). **Stop.**
 
@@ -95,18 +95,15 @@ gh-body-edit comment <id> -R <owner>/<repo> --replace old.md new.md
 
 ## Writing
 
-Write issues in Japanese. The rules hold for every line of a body, a heading, a table cell, or a bold label as much as a sentence, since a reader may read any line alone.
+Write issues in Japanese, following the japanese-writing skill. The rules below are the ones only issues need, and they too hold for every line of a body.
 
 - The human sections hold decisions only and read without the code: behavior, contracts, and their reasons. Job names, lists of paths, and conditional expressions stay out; the execution session finds them in the code. The issue is what a reviewer reads from the PR, and later the record of why, so it has to outlast the code.
 - Short nested bullets. Start as a small skeleton; add a table or a diagram only when asked, apart from the overview table of the next rule.
 - A body that settles three or more decisions of the same kind, such as alerts, endpoints, or jobs, lists them first in one overview table (name, weight, condition), then gives each its own `###` with its reason, and puts the rules every item shares in one section instead of repeating them. A policy the team has to see gets a section of its own, headed for that reader. The template's headings then serve as a checklist of what to cover, except 確かめ方 and 完了条件, which stay as headings. Show this outline and ask before writing the body in it.
-- A line names whose thing it is and who acts on it, unless the line before settles it (「ワーカーの再起動」, not 「再起動」; 「ワーカーに再試行させる」), and repeats the noun instead of これ, それ, or その〜 when two things could be meant. The one who acts is a named thing, defined once (「定期的に動く監視ジョブ」), never an action noun such as 判定 or 確認.
-- An identifier, such as a job, monitor, or setting name, comes only after the plain words that say what it is, in parentheses: a reviewer who has not seen the code reads the words, not the name.
-- A bold label with a colon is a noun naming what the line settles (「**通知**」「**既存の設定**」), followed by a whole sentence carrying the decision and its reason. A label that holds the decision leaves only 「〜ため」 or a fragment after it, and the line no longer reads on its own.
+- The one who acts (japanese-writing rule 6) is defined once, as a named thing such as 「定期的に動く監視ジョブ」, and that name is used throughout.
 - A point left to a person is a question about what is open (「**失敗の通知**: どう通知するかは人が決める」). A topic alone (「**移行が終わるまで**: 人が決める」) reads two ways.
-- Every bullet ends in its predicate, 確かめ方 and 完了条件 included: 「中身が元のファイルと同じになる」, not 「中身が元のファイルと同じ」.
+- 確かめ方 and 完了条件 are bullets like any other, so each ends in its predicate (japanese-writing rule 11).
 - A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
-- No space between a numeral and its counter (「1つ」「2回目」); a space after `#N`.
 - Title: a verb and its object that someone without the background understands.
 
 ## Showing in chat

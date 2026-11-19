@@ -19,7 +19,7 @@ One continuous page: a title, a summary of two or three sentences, a table of co
 2. **Intuition.** The core idea, before any code. Carry it with one small worked example on made-up data, with before and after side by side when the contrast is the point.
 3. **Code.** The changes grouped by concept and ordered the way execution or dependencies run, not by file. Name files and lines, and quote only the lines that carry the idea.
 
-Write in classic style: plain, concrete prose that shows the reader something, each section leading into the next. Put definitions, invariants, and edge cases worth remembering in callouts.
+Put definitions, invariants, and edge cases worth remembering in callouts. A page in Japanese follows the japanese-writing skill.
 
 ## Diagrams and code
 

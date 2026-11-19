@@ -65,7 +65,7 @@ The 要確認ポイント, the points the person has to check before trusting th
 7. Present the report below in the session, with the HTML page beside it. Never as an issue or PR comment.
 8. Stop. `gh pr ready`, merge, apply, and release belong to the person. From here `/close-out <PR>` follows the change to its closed issue, ticking the completion conditions and closing the issue on the person's yes. Review comments on the PR are `/address-review`'s job.
 
-Write the PR description, the session report, the decision log, and the HTML page in the language of the issue.
+Write the PR description, the session report, the decision log, and the HTML page in the language of the issue. Japanese text, code comments included, follows the japanese-writing skill.
 
 ## Report
 

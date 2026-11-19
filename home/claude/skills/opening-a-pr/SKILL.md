@@ -6,7 +6,7 @@ argument-hint: "[PR number or URL, when the PR already exists]"
 
 > Inspired by the opening-a-pr playbook in [cursor/plugins](https://github.com/cursor/plugins/blob/e1cc03121a0e71129a4fb730d7c5528a0a3e43c8/pstack/skills/poteto-mode/playbooks/opening-a-pr.md) (pstack): a description as a short briefing, with empty sections dropped. The text here is written anew.
 
-A reviewer reads the description once, before the code, to learn why the change exists, what it rests on, where to start reading, and what was checked. Everything else is in the code, the commit messages, and the issue, so keep the description to the base template and add an optional part only when its rule holds. Write it in the language of the issue.
+A reviewer reads the description once, before the code, to learn why the change exists, what it rests on, where to start reading, and what was checked. Everything else is in the code, the commit messages, and the issue, so keep the description to the base template and add an optional part only when its rule holds. Write it in the language of the issue; in Japanese, following the japanese-writing skill.
 
 ## Template
 

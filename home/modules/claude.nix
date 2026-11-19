@@ -50,7 +50,7 @@
 
   # The skills that also work in a claude.ai chat, with no local shell, gh, or
   # dotfiles checkout behind them.
-  claudeAiSkills = ["explain-diff" "grilling" "notion-writing" "one-by-one" "review-companion"];
+  claudeAiSkills = ["explain-diff" "grilling" "japanese-writing" "notion-writing" "one-by-one" "review-companion"];
 
   claudeAiSkillsTool = pkgs.writers.writePython3Bin "claude-ai-skills" {libraries = [pkgs.python3Packages.pyyaml];} (builtins.readFile ../claude/bin/claude-ai-skills.py);
 
