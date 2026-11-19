@@ -57,8 +57,8 @@ One fenced code block, starting with the line `# Harness improvement brief`, the
 - **References**: paths, PR or issue URLs, commit hashes. Point at existing artifacts instead of restating them.
 - **Memory notes**: the notes in this project's memory that the change makes redundant or contradicts, by file name, each with "delete" or how to revise it once the change lands; "none" when there are none. Read the memory index for this, not only the notes this session touched: a note left behind keeps steering sessions against the new rule.
 
-The brief may name the project and quote the session. It is pasted into chat and not committed. The dotfiles session sees only the brief, and the files it writes are committed, so they stay general: the concrete example shows what the request means, and none of its project names, hostnames, issue numbers, or quotations are copied into a skill, setting, alias, memory, or doc. End every brief with this line:
+The brief may name the project and quote the session. It is pasted into chat and not committed. The dotfiles session sees only the brief, and the files it writes are committed, so they stay general: the concrete example shows what the request means, and none of its project names, hostnames, issue numbers, domain terms, or quotations are copied into a skill, setting, alias, memory, or doc. End every brief with this line:
 
-`The concrete example illustrates the request. Write the general rule. Copy none of its project names, hostnames, issue numbers, or quotations into the repo.`
+`The concrete example illustrates the request. Write the general rule. Copy none of its project names, hostnames, issue numbers, domain terms, or quotations into the repo.`
 
 Redact secrets, tokens, and personal data.

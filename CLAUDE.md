@@ -19,7 +19,8 @@ This repository is public, and it is worked on from several machines, each signe
 - Do not open pull requests or create merge commits.
 - Do not run `home-manager switch`, `darwin-rebuild switch`, a generation's `activate` script, or anything else that applies a configuration.
 - Do not commit before the user asks.
-- Do not put a work project's names, host names, or key filenames, issue numbers, or quotations from another project or a session in committed text or commit messages.
+- Do not put a work project's names, host names, key filenames, or issue numbers in committed text or commit messages, nor the words that show what it builds: its domain terms (such as what it calls its customers), the vendors and services it runs on, and its architecture.
+- Do not quote another project or a session in committed text, the user's own words and corrections included. An example in a skill or a rule is made up for it, in general words.
 - Do not keep a rule for this repo only in auto memory; put it here, or in `home/claude/CLAUDE.md` when it holds for every project.
 - Do not write a skill or a permission allowlist entry for a mechanical git workflow; propose an alias in `home/modules/git.nix` for the user to run.
 - Do not give the skills in `claudeAiSkills` (`home/modules/claude.nix`) commands or local paths: they also run in claude.ai chats with no shell behind them.
