@@ -5,8 +5,6 @@ description: Teach a code change as one HTML page with background, intuition, an
 
 > Inspired by Geoffrey Litt's [explain-diff](https://gist.github.com/geoffreylitt/a29df1b5f9865506e8952488eac3d524/126e7fe9eecaafadfe1ac8bb183d135812b608f2) gist (revision `126e7fe`, 2026-07-01). The idea of teaching a change through background, intuition, and code is Geoffrey Litt's, used with thanks. The gist has no license, so this text is written anew rather than copied; keep it that way when updating.
 
-# Explain Diff
-
 The reader wants to understand the change well enough to review it, build on it, or explain it to someone else. A summary of the diff does not get them there; a page that teaches it does.
 
 ## Before writing

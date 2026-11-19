@@ -53,7 +53,7 @@ Run this list yourself and fix what it finds before showing anything:
 - Step scan: no line that decides nothing, and no line that transcribes code.
 - Proportion: the sub-issues together are not several times longer than the spec.
 - Review focus: for each input or failure the spec implies but does not discuss, the one most likely to bite has a test owned by some sub-issue.
-- Writing: every heading, table cell, and bold label names whose thing it is; each identifier comes after the plain words that say what it is; no action noun is a subject; no calque.
+- Writing: every heading, table cell, and bold label names whose thing it is; each identifier comes after the plain words that say what it is; no action noun is a subject.
 
 Then show the sub-issues (Showing in chat). **Stop.**
 
@@ -106,7 +106,6 @@ Write issues in Japanese. The rules hold for every line of a body, a heading, a 
 - A point left to a person is a question about what is open (「**失敗の通知**: どう通知するかは人が決める」). A topic alone (「**移行が終わるまで**: 人が決める」) reads two ways.
 - Every bullet ends in its predicate, 確かめ方 and 完了条件 included: 「中身が元のファイルと同じになる」, not 「中身が元のファイルと同じ」.
 - A term is linked to its official documentation at its first occurrence; open the page and confirm the term is there first.
-- The word Japanese engineers use, not a calque, as CLAUDE.md sets out.
 - No space between a numeral and its counter (「1つ」「2回目」); a space after `#N`.
 - Title: a verb and its object that someone without the background understands.
 
@@ -116,7 +115,7 @@ Show only what the user decides, as rendered markdown. Bundle the questions that
 
 ## Writing to GitHub
 
-Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`; `gh-body-edit comment <id>` takes the same for the status comment), which touches only that part and aborts unless the anchor occurs exactly once and the body is still what it fetched. Keep the title unless asked.
+Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`; `gh-body-edit comment <id>` takes the same for the status comment), which touches only that part. Keep the title unless asked.
 
 ## Update
 

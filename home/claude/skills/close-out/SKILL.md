@@ -25,7 +25,7 @@ Run every row of checks.md whose stage range includes this stage; a row for an e
 - **ok**, with a link to what shows it: a commit, a CI run, a comment, a timeline event.
 - **blocked**: something has to happen first; say what and who does it.
 - **person**: only the person can check it, in a live environment or a dashboard; say where to look and what to expect.
-- **unknown**: the lookup failed, or came back empty where it should not have. Never read it as none.
+- **unknown**: the lookup failed, or came back empty where it should not have.
 
 ## Report
 
