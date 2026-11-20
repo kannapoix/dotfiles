@@ -21,4 +21,3 @@ For an issue whose body is replaced as a whole, such as one written before the c
    ```
 
    When GitHub's body changed after the baseline, `gh-body-edit` stops: fetch the body again and show the user the difference. After applying, confirm that the body on GitHub equals the draft. Staging the draft again makes the next round start from what GitHub now has.
-7. **Status.** When the parent's status comment has a line for this issue, update that line (Status).

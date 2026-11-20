@@ -16,13 +16,13 @@ The two templates in this skill's directory, `spec.md` for the parent and `sub-i
 
 ### 1. Place
 
-The spec lives in the parent issue's body. Read the parent if it exists: body, comments, its sub-issues, and the status comment (Status below); with a status comment, resume at the first stage not approved and say where you resume. With no parent yet, the spec becomes a new issue at stage 2's approval. Read the code, docs, and design notes the work touches, and the project's conventions (CLAUDE.md, memory).
+The spec lives in the parent issue's body. Read the parent if it exists: body, comments, and its sub-issues. Resume at the first stage GitHub does not show done, and say where you resume: a spec in the body means stage 2 was approved, a filled 仕組み section stage 3, and sub-issues stages 4 and 7. With no parent yet, the spec becomes a new issue at stage 2's approval. Read the code, docs, and design notes the work touches, and the project's conventions (CLAUDE.md, memory).
 
 ### 2. Spec — Stop
 
 Draft from `spec.md`. Start from the headings and a few short bullets under each, and grow it with the user; do not arrive with a finished document.
 
-End by proposing whether stage 3 is needed (several systems touched, a flow across them, or something that could break far away) and let the user decide. On approval, write the spec into the parent (Writing to GitHub) and create the status comment; say before writing that both will be written. When the parent already has a body, name what the spec drops from it before writing.
+End by proposing whether stage 3 is needed (several systems touched, a flow across them, or something that could break far away) and let the user decide. On approval, write the spec into the parent (Writing to GitHub); say before writing that it will be written. When the parent already has a body, name what the spec drops from it before writing.
 
 ### 3. Mechanism — Stop, only when the user asked for it
 
@@ -70,28 +70,7 @@ blocker=$(gh api repos/<owner>/<repo>/issues/<sibling> --jq .id)   # the integer
 gh api -X POST repos/<owner>/<repo>/issues/<number>/dependencies/blocked_by -F issue_id="$blocker"
 ```
 
-`replaceParent: true` in `addSubIssue` moves an issue to another parent. Update the status comment. Then offer an execution session for each sub-issue nothing blocks: a task chip or a fresh session whose prompt is exactly `/work-issue <number>` and nothing else. The issue is the whole brief; extra context in the prompt would hide what it lacks.
-
-## Status
-
-The state lives in one comment on the parent, edited in place, so the work survives a context reset and the body's edit count stays a measure of the spec. Keep it in the issue's language:
-
-```markdown
-<!-- write-issue-status -->
-- 段2 spec: 承認 <date>
-- 段3 仕組み: 不要 | 承認 <date> | 未着手
-- 段4 割り方: 承認 <date> | 未着手
-- 段7 起票: #<n>, #<n> | 未着手
-- 残る問い:
-  - <question, and who answers it>
-```
-
-Find the comment, then change only the lines that moved, as with a body (Writing to GitHub):
-
-```bash
-gh api repos/<owner>/<repo>/issues/<parent>/comments --jq '.[] | select(.body | startswith("<!-- write-issue-status -->")) | .id'
-gh-body-edit comment <id> -R <owner>/<repo> --replace old.md new.md
-```
+`replaceParent: true` in `addSubIssue` moves an issue to another parent. Then offer an execution session for each sub-issue nothing blocks: a task chip or a fresh session whose prompt is exactly `/work-issue <number>` and nothing else. The issue is the whole brief; extra context in the prompt would hide what it lacks.
 
 ## Writing
 
@@ -112,7 +91,7 @@ Show only what the user decides, as rendered markdown. Bundle the questions that
 
 ## Writing to GitHub
 
-Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`; `gh-body-edit comment <id>` takes the same for the status comment), which touches only that part. Keep the title unless asked.
+Create nothing before the stage's approval. The user edits issues on the web at the same time, so a body changes only through `gh-body-edit issue <N> --replace old.md new.md` (or `--append-after anchor.md new.md`, or `--delete old.md`), which touches only that part. Keep the title unless asked.
 
 ## Update
 
@@ -132,3 +111,4 @@ Two numbers tell whether the spec and the issues were complete: how many times a
 - Do not write history into an issue, such as keeping one commit, amending, or squashing; CLAUDE.md sets that by the pull request's stage.
 - Do not write a value before it is measured; write 「未計測。#N で計測して決める」.
 - Do not paste a body into chat as a fenced block.
+- Do not comment on an issue to keep the stage or open questions: the stage shows in the body and the sub-issues, and an open question goes in 自信のない判断, as a 「は人が決める」 line, or to the user in chat.
