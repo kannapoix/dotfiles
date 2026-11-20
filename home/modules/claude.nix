@@ -129,6 +129,43 @@
             }
             {
               type = "command";
+              # Sessions started side by side can share one worktree, and the
+              # rule above cannot stop two of them holding one branch: the
+              # app's PR bindings are not visible to a hook. So a command that
+              # rewrites or publishes the branch asks first when another
+              # session wrote a transcript line in this worktree in the last
+              # 10 minutes. Sessions that start in one folder keep their
+              # transcripts in one directory; a line's own timestamp decides,
+              # since the app touches idle transcripts' mtimes in bulk.
+              command = ''
+                input=$(cat)
+                cmd=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.tool_input.command // ""')
+                printf '%s' "$cmd" | ${pkgs.gnugrep}/bin/grep -Eq \
+                  -e '(^|[^[:alnum:]_-])git( +-[cC] +[^ ]+| +--?[[:alnum:]-]+(=[^ ]+)?)* +(push|rebase|rb|squash-fixups)([^[:alnum:]_-]|$)' \
+                  -e '(^|[^[:alnum:]_-])git( +-[cC] +[^ ]+| +--?[[:alnum:]-]+(=[^ ]+)?)* +commit([^;&|]* )?--amend' \
+                  || exit 0
+                sid=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.session_id // ""')
+                cwd=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.cwd // ""')
+                transcript=$(printf '%s' "$input" | ${pkgs.jq}/bin/jq -r '.transcript_path // ""')
+                [ -n "$sid" ] && [ -n "$cwd" ] && [ -r "$transcript" ] || exit 0
+                root=$(${pkgs.git}/bin/git -C "$cwd" rev-parse --show-toplevel 2>/dev/null) || root=$cwd
+                now=$(${pkgs.coreutils}/bin/date -u +%s)
+                others=""
+                for f in $(${pkgs.findutils}/bin/find "$(${pkgs.coreutils}/bin/dirname "$transcript")" -maxdepth 1 -name '*.jsonl' -mmin -10 ! -name "$sid.jsonl"); do
+                  other=$(${pkgs.coreutils}/bin/tail -n 50 "$f" | ${pkgs.jq}/bin/jq -Rrn --arg root "$root" --argjson now "$now" '
+                    [inputs | fromjson? | objects | select(.timestamp and .cwd and .sessionId)] | last // empty
+                    | select((.cwd == $root or (.cwd | startswith($root + "/")))
+                             and ($now - (.timestamp | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601)) < 600)
+                    | .sessionId')
+                  [ -n "$other" ] && others="$others $other"
+                done
+                [ -n "$others" ] || exit 0
+                ${pkgs.jq}/bin/jq -nc --arg r "Another session wrote in this worktree in the last 10 minutes ($others ). Two sessions rewriting one branch in one folder overwrite each other's work: approve only if this session is the one that owns this branch and its PR." \
+                  '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $r}}'
+              '';
+            }
+            {
+              type = "command";
               # Permission rules match only the plain spelling, so this also
               # catches `git -C dir push`, options before a rebuild subcommand,
               # and running a built generation's activate script directly. Each
