@@ -28,17 +28,17 @@ A reviewer reads the description once, before the code, to learn why the change 
 <only when a person runs something: the merge order, an apply, a check before merge>
 
 ## 動作確認
-- [x] <what you verified>: <result>
+- [x] <what you verified>: <result, and its evidence: a CI run, a log, a link>
 - [ ] <what a person still has to verify>
 
 <details><summary>手順</summary>
 
-<the commands, and the key lines of their output>
+<only for the [ ] items: what the person runs or looks at, and what to expect>
 
 </details>
 ````
 
-動作確認 is always the last section: `[x]` for what you verified, `[ ]` for what is left to a person. Drop a heading with nothing under it.
+動作確認 is always the last section: `[x]` for what you verified, with its result and evidence on the line and no commands of yours, `[ ]` for what is left to a person, with the steps folded under it only when the person has something to run. Drop a heading with nothing under it.
 
 ## Optional parts
 
