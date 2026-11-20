@@ -6,7 +6,7 @@ argument-hint: "[PR number or URL, when the PR already exists]"
 
 > Inspired by the opening-a-pr playbook in [cursor/plugins](https://github.com/cursor/plugins/blob/e1cc03121a0e71129a4fb730d7c5528a0a3e43c8/pstack/skills/poteto-mode/playbooks/opening-a-pr.md) (pstack): a description as a short briefing, with empty sections dropped. The text here is written anew.
 
-A reviewer reads the description once, before the code, to learn why the change exists, what it rests on, where to start reading, and what was checked. Everything else is in the code, the commit messages, and the issue, so keep the description to the base template and add an optional part only when its rule holds. Write it in the language of the issue; in Japanese, following the japanese-writing skill.
+A reviewer reads the description once, before the code, to learn why the change exists, what it rests on, where to start reading, and what was checked. Everything else is in the code, the commit messages, and the issue. Only the lead lines, 背景, and 動作確認 are always there; every other section goes in only when its rule holds, so a small PR of one kind, such as a lockfile bump, gets those three and nothing more. Write it in the language of the issue; in Japanese, following the japanese-writing skill.
 
 ## Template
 
@@ -20,6 +20,7 @@ A reviewer reads the description once, before the code, to learn why the change 
 <optional parts>
 
 ## コードを読む順番
+<only when the change spans several files or steps that read best in an order>
 1. [<path>](<link pinned to the commit SHA>): <one phrase>
 <mark the central file; name files not to read, such as generated code>
 
@@ -50,11 +51,11 @@ Each goes after 背景, and only when its rule holds:
 
 The description stays within 40 lines, counting non-empty lines outside diagrams, code blocks, and tables, optional parts included.
 
-After writing it, report one line for the optional parts put in and one for those left out, each with its reason, so the user can add or remove one by name:
+After writing it, report one line for the conditional sections and optional parts put in and one for those left out, each with its reason, so the user can add or remove one by name:
 
 ```
-入れた: 全体像(PR を積んでいる)
-入れなかった: 流れの図(1つのファイルで閉じている)、設計の変更(issue のとおり)、選ばなかった案(なし)
+入れた: 全体像(PR を積んでいる)、コードを読む順番(3つのパッケージにまたがる)
+入れなかった: 流れの図(1つのファイルで閉じている)、設計の変更(issue のとおり)、選ばなかった案(なし)、手順(人が実行するものがない)
 ```
 
 ## Writing

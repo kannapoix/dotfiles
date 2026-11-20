@@ -12,7 +12,7 @@ Say in one line what you are doing: "#N を spec にしてタスクに分ける"
 
 Work in numbered stages. At the end of each one marked **Stop**, wait for the user's approval. Approval of one stage is never approval of the next, and "looks good" on the spec does not approve the cut.
 
-The two templates in this skill's directory, `spec.md` for the parent and `sub-issue.md` for each piece, say under each heading what belongs there. Read the template before drafting from it, and read Writing below before any body.
+The two templates in this skill's directory, `spec.md` for the parent and `sub-issue.md` for each piece, say under each heading what belongs there, and for a section that is not always needed, when it goes in; leave it out when that does not hold, so the issue fits the size and kind of the work. Read the template before drafting from it, and read Writing below before any body.
 
 ### 1. Place
 

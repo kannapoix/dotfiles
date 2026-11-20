@@ -2,9 +2,10 @@
 <One paragraph that reads without opening the parent: the state this issue brings about, and a link to the part of the parent's spec it carries. A fact the work depends on is stated with its link: what another issue put in place, and every constraint set on it anywhere above or beside this issue (an ancestor issue, a sibling, a design doc), such as where it lives or how it may be referenced. The execution session reads only this issue and its parent, so a constraint left in a grandparent or a sibling does not reach it. An ordering constraint goes here, and between siblings also as blocked-by.>
 
 ## 何を守るか
-<What breaks or goes unnoticed without this, and what it leaves alone because something else already covers it. The reasons behind the spec's decisions stay in the parent.>
+<Only when the piece keeps a condition true that would otherwise break or go unnoticed, such as an invariant a later change could undo; a bug fix or a bump leaves it out. What breaks or goes unnoticed without this, and what it leaves alone because something else already covers it. The reasons behind the spec's decisions stay in the parent.>
 
 ## 変更方針
+<Only when this piece makes a decision of its own, or leaves one to a person.>
 - **<what a decision only this issue makes is about, as a noun>**: <the decision and why, as a whole sentence; one or two lines. What must not change is a line here too: 「…はしない」>
 - **<what a person will decide later is about, as a noun>**: <what is open, as a question>は人が決める
 
