@@ -59,5 +59,12 @@
       flake = false;
     };
     nixpkgs-direnv.url = "github:NixOS/nixpkgs/5b5b46259bef947314345ab3f702c56b7788cab8";
+    # pstack's principles, read by the entry skill. Pinned in the URL so that
+    # `nix flake update` never moves it: a bump is a hand edit made after
+    # reading the upstream diff of pstack/skills/principle-*.
+    cursor-plugins = {
+      url = "github:cursor/plugins/aaeb0ea3a0584995aa8f55ce44c6c5259414b896";
+      flake = false;
+    };
 };
 }

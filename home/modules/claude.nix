@@ -2,9 +2,23 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: let
   cfg = config.modules.claude;
+
+  dirNames = dir: lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir dir));
+  pstackPrinciples = builtins.filter (lib.hasPrefix "principle-") (dirNames "${inputs.cursor-plugins}/pstack/skills");
+  ownPrinciplesDir = ../claude/principles;
+  ownPrinciples =
+    if builtins.pathExists ownPrinciplesDir
+    then dirNames ownPrinciplesDir
+    else [];
+  # builtins.split puts each match's capture groups in a list between the
+  # unmatched strings.
+  heyIndexed = lib.sort lib.lessThan (lib.unique (lib.flatten (
+    builtins.filter builtins.isList (builtins.split "`(principle-[a-z0-9-]+)`" (builtins.readFile ../claude/skills/hey/SKILL.md))
+  )));
 
   # Guarded edits of issue, PR, and comment bodies; the skills call it instead
   # of gh edit and gh api PATCH.
@@ -355,6 +369,11 @@
         "Bash(git rev-parse:*)"
         "Bash(git merge-base:*)"
         "Bash(git status:*)"
+        # The entry skill, which verifier reads first, and the principle
+        # bodies it sends Claude to read.
+        "Read(~/.claude/skills/hey/**)"
+        "Read(~/.claude/pstack/**)"
+        "Read(~/.claude/principles/**)"
       ];
     };
   };
@@ -374,7 +393,30 @@ in {
     # `head -c -1` and `timeout`, and /usr/bin/python3 (3.9) rejects a long
     # line holding multibyte text unless the script declares its encoding.
     home.packages = [ghBodyEdit scopeDiagramPng claudeAiSkillsTool pkgs.coreutils pkgs.python3];
-    home.file.".local/share/claude-ai-skills".source = claudeAiSkillBundles;
+    home.file =
+      {
+        ".local/share/claude-ai-skills".source = claudeAiSkillBundles;
+        # The whole pstack folder rather than the principle-* skills alone:
+        # two principles link to sibling pstack skills, and the folder carries
+        # the LICENSE. Like ~/.claude/principles, it sits outside
+        # ~/.claude/skills, so none of it loads on its own.
+        ".claude/pstack".source = "${inputs.cursor-plugins}/pstack";
+      }
+      // lib.listToAttrs (map (name: lib.nameValuePair ".claude/principles/${name}" {source = ownPrinciplesDir + "/${name}";}) ownPrinciples);
+
+    # The hey skill's indexes are written by hand, so a pstack bump that adds,
+    # drops, or renames a principle, or an own principle missing from the
+    # index, fails the build instead of leaving an entry that points nowhere.
+    assertions = [
+      {
+        assertion = heyIndexed == lib.sort lib.lessThan (pstackPrinciples ++ ownPrinciples);
+        message = ''
+          The principle names in backticks in home/claude/skills/hey/SKILL.md must match the installed principles.
+            indexed:   ${toString heyIndexed}
+            installed: ${toString (lib.sort lib.lessThan (pstackPrinciples ++ ownPrinciples))}
+        '';
+      }
+    ];
 
     # claude.ai has no upload API, so the upload is left to the user: the
     # check asks to open whatever claude.ai is missing or behind on. The bundle

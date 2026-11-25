@@ -17,6 +17,23 @@
         "type": "github"
       }
     },
+    "cursor-plugins": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795150433,
+        "narHash": "sha256-yq3fOgiF8GDkjae1tcmtcFWIKGrY5H69tNbOM4kQD/M=",
+        "owner": "cursor",
+        "repo": "plugins",
+        "rev": "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cursor",
+        "repo": "plugins",
+        "rev": "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -234,6 +251,7 @@
     },
     "root": {
       "inputs": {
+        "cursor-plugins": "cursor-plugins",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "homebrew-cask": "homebrew-cask",
