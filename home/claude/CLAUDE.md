@@ -50,12 +50,6 @@ A comment, commit message, or PR description covers only what its change does. A
 
 In Japanese, in replies as much as in code, issues, and PRs, use the word Japanese engineers use, not a word-for-word rendering of the English, which makes the reader translate it back: 通知, not 知らせ; 発火する, not 鳴る; バージョン, not 版. A verb or a metaphor can be a calque as much as a one-character noun. When unsure, take the word the vendor's Japanese documentation uses, or keep the English term (severity). Japanese text that someone else reads, such as an issue, a PR description, a review comment, a code comment, or a doc, follows the japanese-writing skill.
 
-# Causes
-
-A fix that removes the symptom is not finished until the cause is named. Before calling a bug fixed, say in one line what caused it and what evidence says so — a log line, a `git log -S` hit, a failing test, a repro. Where there is no evidence for the step below, stop and call it a hypothesis rather than filling the gap with something plausible. Keep going down while the evidence holds, and stop at a cause that can actually be changed. When the same failure turns up a second time, the cause to name is why the first fix let it through.
-
-The same holds for any claim that leaves the session, in a reply, a generated page, or memory. What code does or what a value means rests on the code and the values at its real call sites, not on the shape of a signature; what a spec or issue says, on its text; a state such as which points were commented on, merged, or approved, on the PR or issue read just now, not on a remark about it. A summary of earlier work, such as the one compaction leaves, is a remark too: re-read the state before stating it. What you have not read, call unverified.
-
 # Showing changes
 
 Every time you change files, show the diff itself, not only a summary of it. In the desktop app, open the diff pane for files in the session's folders; for anything else, paste `git diff` in a `diff` code block. Show it before asking the user to commit or push.

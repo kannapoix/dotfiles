@@ -65,7 +65,7 @@ Each body is `~/.claude/pstack/skills/<name>/SKILL.md`, with `<name>` the one in
 
 Each body is `~/.claude/principles/<name>/SKILL.md`, with `<name>` the one in backticks.
 
-None yet.
+- **Rest Claims on Evidence** (`principle-rest-claims-on-evidence`). Calling a bug fixed, and before any claim leaves the session in a reply, a generated page, or memory. Name the cause with its evidence, and state only what you read.
 
 ## Routing
 
